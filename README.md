@@ -13,6 +13,10 @@ Microsoft Sentinel ships a powerful built-in investigation graph, but it lives o
 
 If your data has a *from* and a *to*, you can visualize it here. The tool is also used as a **general-purpose graph modeler** for service maps, org charts, pipeline flows, and more.
 
+<div align="center">
+  <img src="https://github.com/mariocuomo/Security-Graph-Explorer/blob/main/img/SGE.png" width="1200"> </img>
+</div>
+
 ---
 
 ## Features
@@ -109,6 +113,10 @@ Optional parameters:
 | 🔏 | **Sensitive File Access** | `DeviceFileEvents` |
 | 🎯 | **Threat Intelligence DNS Hits** | `ASimDnsActivityLogs` |
 | 💥 | **Group Membership Changes** | `IdentityDirectoryEvents` |
+
+<div align="center">
+  <img src="https://github.com/mariocuomo/Security-Graph-Explorer/blob/main/img/SGEGQL.png" width="1200"> </img>
+</div>
 
 ---
 
