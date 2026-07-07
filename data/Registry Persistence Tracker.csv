@@ -1,0 +1,8 @@
+timestamp,device,process,account,registry_key,value_name,action
+2025-07-01 14:00,PC-CHARLIE-01,powershell.exe,charlie,Run,MalwarePersist,RegistryValueSet
+2025-07-01 14:01,PC-CHARLIE-01,powershell.exe,charlie,RunOnce,Updater,RegistryValueSet
+2025-07-01 14:02,PC-CHARLIE-01,cmd.exe,charlie,Services,FakeService,RegistryKeyCreated
+2025-07-01 14:30,SRV-FILE-01,rundll32.exe,SYSTEM,Winlogon,Userinit,RegistryValueSet
+2025-07-01 15:00,PC-BOB-01,mshta.exe,bob,Run,WindowsUpdate,RegistryValueSet
+2025-07-01 15:01,PC-BOB-01,wscript.exe,bob,Startup,helper.vbs,RegistryValueSet
+2025-07-01 16:00,SRV-DC-01,regsvr32.exe,SYSTEM,AppInit,evilDll.dll,RegistryValueSet

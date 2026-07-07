@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>How to Create a Graph — Security Graph Explorer</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    /* ── Reset & tokens ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --accent:      #f87171;
+      --accent-dim:  #fca5a5;
+      --accent-glow: rgba(248,113,113,.18);
+      --bg-deep:     #080810;
+      --bg-base:     #0f0f1a;
+      --bg-surface:  #161625;
+      --bg-raise:    #1e1e35;
+      --border:      #2a2a40;
+      --text-primary:#e2e8f0;
+      --text-muted:  #9ca3af;
+      --text-dim:    #6b7280;
+      --success:     #10b981;
+      --warn:        #f59e0b;
+      --radius-sm:   5px;
+      --radius-md:   8px;
+      --radius-lg:   12px;
+    }
+
+    body {
+      font-family: "Segoe UI", system-ui, sans-serif;
+      background: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.7;
+    }
+
+    /* ── Layout ── */
+    .page-shell {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      min-height: 100vh;
+    }
+
+    /* ── Left nav ── */
+    nav {
+      background: var(--bg-deep);
+      border-right: 1px solid var(--border);
+      padding: 32px 0 32px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 20px 24px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+      text-decoration: none;
+    }
+    .nav-logo i { color: var(--accent); font-size: 20px; }
+    .nav-logo span { font-size: 13px; font-weight: 700; color: var(--text-primary); line-height: 1.3; }
+    .nav-logo small { display: block; font-size: 10px; font-weight: 400; color: var(--text-dim); }
+
+    .nav-label {
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      padding: 8px 20px 4px;
+    }
+
+    nav a {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 20px;
+      font-size: 13px;
+      color: var(--text-muted);
+      text-decoration: none;
+      border-left: 3px solid transparent;
+      transition: color .15s, border-color .15s, background .15s;
+    }
+    nav a:hover { color: var(--text-primary); background: rgba(255,255,255,.04); }
+    nav a.active { color: var(--accent); border-left-color: var(--accent); background: var(--accent-glow); }
+    nav a i { width: 14px; text-align: center; font-size: 12px; }
+
+    .nav-back {
+      margin-top: auto;
+      padding: 16px 20px 0;
+      border-top: 1px solid var(--border);
+    }
+    .nav-back a {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      color: var(--text-dim);
+      text-decoration: none;
+    }
+    .nav-back a:hover { color: var(--accent); }
+
+    /* ── Main content ── */
+    main {
+      padding: 48px 56px 80px;
+      max-width: 860px;
+    }
+
+    .page-hero {
+      margin-bottom: 48px;
+    }
+    .page-hero h1 {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .page-hero h1 i { color: var(--accent); }
+    .page-hero p {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 620px;
+    }
+
+    /* ── Section ── */
+    .section { margin-bottom: 52px; }
+
+    .section-anchor { position: relative; top: -72px; visibility: hidden; }
+
+    h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border);
+    }
+    h2 .step-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      background: var(--accent-glow);
+      border: 1px solid rgba(248,113,113,.4);
+      border-radius: 50%;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent-dim);
+      margin: 20px 0 8px;
+    }
+
+    p { font-size: 14px; color: var(--text-muted); margin-bottom: 10px; }
+    p + p { margin-top: 6px; }
+
+    /* ── Code blocks ── */
+    pre {
+      background: var(--bg-deep);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 16px 18px;
+      overflow-x: auto;
+      font-size: 12.5px;
+      line-height: 1.7;
+      margin: 10px 0 16px;
+      position: relative;
+    }
+    pre code { font-family: "Cascadia Code", "Fira Code", Consolas, monospace; color: var(--text-primary); }
+    .token-key     { color: #fca5a5; }
+    .token-str     { color: #86efac; }
+    .token-num     { color: #93c5fd; }
+    .token-comment { color: #4b5563; font-style: italic; }
+    .token-kql     { color: #c4b5fd; }
+    .token-csv-hdr { color: var(--accent-dim); font-weight: 700; }
+
+    /* ── Callout ── */
+    .callout {
+      display: flex;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      margin: 16px 0;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .callout i { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+    .callout p  { margin: 0; font-size: 13px; }
+    .callout-info  { background: rgba(147,197,253,.07); border: 1px solid rgba(147,197,253,.2); color: #93c5fd; }
+    .callout-tip   { background: rgba(16,185,129,.07);  border: 1px solid rgba(16,185,129,.2);  color: #6ee7b7; }
+    .callout-warn  { background: rgba(245,158,11,.07);  border: 1px solid rgba(245,158,11,.2);  color: #fcd34d; }
+
+    /* ── Property table ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin: 12px 0 20px;
+    }
+    th {
+      background: var(--bg-raise);
+      color: var(--accent-dim);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .7px;
+      text-transform: uppercase;
+      padding: 8px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    td {
+      padding: 8px 12px;
+      border-bottom: 1px solid rgba(42,42,64,.6);
+      color: var(--text-muted);
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+    td code, p code {
+      background: var(--bg-raise);
+      border: 1px solid var(--border);
+      border-radius: 3px;
+      padding: 1px 5px;
+      font-family: "Cascadia Code", Consolas, monospace;
+      font-size: 11.5px;
+      color: #fca5a5;
+    }
+    td.badge-req { color: var(--accent); font-weight: 700; }
+    td.badge-opt { color: var(--text-dim); }
+
+    /* ── Pipeline diagram ── */
+    .pipeline {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin: 20px 0;
+      flex-wrap: wrap;
+      row-gap: 12px;
+    }
+    .pipe-step {
+      background: var(--bg-raise);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      text-align: center;
+      min-width: 120px;
+    }
+    .pipe-step i { color: var(--accent); font-size: 22px; display: block; margin-bottom: 6px; }
+    .pipe-step span { font-size: 12px; color: var(--text-muted); }
+    .pipe-arrow { color: var(--border); font-size: 20px; padding: 0 10px; }
+
+    /* ── Node type grid ── */
+    .type-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 8px;
+      margin: 12px 0 20px;
+    }
+    .type-chip {
+      background: var(--bg-raise);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 8px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .type-chip i { color: var(--accent); display: block; font-size: 16px; margin-bottom: 4px; }
+
+    /* ── Wizard screenshot placeholder ── */
+    .ui-hint {
+      background: var(--bg-deep);
+      border: 1px dashed var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      font-size: 13px;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 12px 0;
+    }
+    .ui-hint i { font-size: 22px; color: var(--accent); }
+
+    /* ── Responsive ── */
+    @media (max-width: 760px) {
+      .page-shell { grid-template-columns: 1fr; }
+      nav { position: static; height: auto; padding: 16px 0; }
+      main { padding: 24px 20px 60px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page-shell">
+
+  <!-- ══ Left navigation ══ -->
+  <nav>
+    <a class="nav-logo" href="index.html">
+      <i class="fa-solid fa-circle-nodes"></i>
+      <span>Security Graph Explorer<small>Documentation</small></span>
+    </a>
+
+    <div class="nav-label">On this page</div>
+    <a href="#overview"   class="active"><i class="fa-solid fa-map"></i>  Overview</a>
+    <a href="#step1">     <i class="fa-solid fa-table"></i>  Step 1 — CSV data</a>
+    <a href="#step2">     <i class="fa-solid fa-code"></i>   Step 2 — JSON config</a>
+    <a href="#step3">     <i class="fa-solid fa-play"></i>   Step 3 — Visualize</a>
+    <a href="#wizard">    <i class="fa-solid fa-wand-magic-sparkles"></i> Using the Wizard</a>
+    <a href="#save">      <i class="fa-solid fa-floppy-disk"></i> Saving graphs</a>
+    <a href="#advanced">  <i class="fa-solid fa-sliders"></i> Advanced options</a>
+    <a href="#gql">       <i class="fa-solid fa-circle-nodes"></i> GQL filter bar</a>
+    <a href="#kql">       <i class="fa-solid fa-database"></i> Live KQL data</a>
+    <a href="#types">     <i class="fa-solid fa-shapes"></i>  Node types</a>
+
+    <div class="nav-back">
+      <a href="index.html"><i class="fa-solid fa-arrow-left"></i> Back to the app</a>
+    </div>
+  </nav>
+
+  <!-- ══ Main content ══ -->
+  <main>
+
+    <div class="page-hero">
+      <h1><i class="fa-solid fa-circle-nodes"></i> How to Create a Graph</h1>
+      <p>Turn any Sentinel or Defender table into an interactive graph in three steps:
+         prepare your CSV data, write a small JSON config, and click Visualize.</p>
+    </div>
+
+    <!-- ─── Overview ─── -->
+    <div class="section">
+      <span class="section-anchor" id="overview"></span>
+      <h2><i class="fa-solid fa-map" style="color:var(--accent)"></i> Overview</h2>
+
+      <p>The app works as a transformation pipeline. You bring tabular data (CSV rows),
+         declare which columns are <strong>nodes</strong> and which columns describe
+         <strong>edges</strong> between them, and the engine renders the graph.</p>
+
+      <div class="pipeline">
+        <div class="pipe-step"><i class="fa-solid fa-table"></i><span>CSV data</span></div>
+        <div class="pipe-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+        <div class="pipe-step"><i class="fa-solid fa-code"></i><span>JSON config</span></div>
+        <div class="pipe-arrow"><i class="fa-solid fa-chevron-right"></i></div>
+        <div class="pipe-step"><i class="fa-solid fa-circle-nodes"></i><span>Graph</span></div>
+      </div>
+
+      <p>No back-end, no install — everything runs in the browser.</p>
+    </div>
+
+    <!-- ─── Step 1 — CSV ─── -->
+    <div class="section">
+      <span class="section-anchor" id="step1"></span>
+      <h2><span class="step-badge">1</span> Prepare your CSV data</h2>
+
+      <p>The CSV must have a <strong>header row</strong> followed by at least one data row.
+         Each row represents a relationship in your environment (e.g. a sign-in event, a
+         network connection, an alert linked to an entity).</p>
+
+      <h3>Minimal example — Login events</h3>
+      <pre><code><span class="token-csv-hdr">timestamp,user,machine,result</span>
+2025-07-01 08:10,alice@contoso.com,PC-ALICE-01,Success
+2025-07-01 09:03,bob@contoso.com,SRV-FILE-01,Failure
+2025-07-01 11:02,charlie@contoso.com,SRV-DC-01,Failure
+2025-07-01 11:03,charlie@contoso.com,SRV-DC-01,Success</code></pre>
+
+      <h3>Where to get CSV data</h3>
+
+      <table>
+        <thead><tr><th>Source</th><th>How</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Microsoft Sentinel</td>
+            <td>Run a KQL query in Log Analytics → <strong>Export → CSV</strong></td>
+          </tr>
+          <tr>
+            <td>Microsoft Defender XDR</td>
+            <td>Advanced Hunting → run query → <strong>Export</strong></td>
+          </tr>
+          <tr>
+            <td>PowerShell script</td>
+            <td>
+              Export the query results as CSV from Defender / Sentinel, rename the file to
+              the <strong>exact graph name</strong> (e.g. <code>Identity Logon Map.csv</code>),
+              place it in the <code>data/</code> folder, then run
+              <code>.\Update-SentinelGraphs.ps1</code> — it will inject the CSV content into
+              <code>sentinel-graphs.json</code> automatically.
+            </td>
+          </tr>
+          <tr>
+            <td>Manual / test data</td>
+            <td>Paste any CSV directly in the Editor panel</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-warn">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <p>Values must <strong>not</strong> contain unquoted commas. If a value contains a comma
+           or double-quote, wrap the whole value in double-quotes and escape inner quotes as <code>""</code>.</p>
+      </div>
+    </div>
+
+    <!-- ─── Step 2 — JSON config ─── -->
+    <div class="section">
+      <span class="section-anchor" id="step2"></span>
+      <h2><span class="step-badge">2</span> Write the JSON config</h2>
+
+      <p>The config tells the engine which CSV columns become <strong>nodes</strong>
+         and which columns describe <strong>edges</strong> between those nodes.</p>
+
+      <h3>Full example</h3>
+      <pre><code>{
+  <span class="token-key">"title"</span>: <span class="token-str">"Login Activity"</span>,
+  <span class="token-key">"nodes"</span>: [
+    {
+      <span class="token-key">"id_column"</span>:    <span class="token-str">"user"</span>,     <span class="token-comment">// column whose values become node IDs</span>
+      <span class="token-key">"type"</span>:          <span class="token-str">"user"</span>,     <span class="token-comment">// icon shown inside the node circle</span>
+      <span class="token-key">"properties"</span>:   [<span class="token-str">"src_ip"</span>, <span class="token-str">"location"</span>]  <span class="token-comment">// extra info in the tooltip</span>
+    },
+    {
+      <span class="token-key">"id_column"</span>:    <span class="token-str">"machine"</span>,
+      <span class="token-key">"type"</span>:          <span class="token-str">"machine"</span>
+    }
+  ],
+  <span class="token-key">"edges"</span>: [
+    {
+      <span class="token-key">"from_column"</span>:  <span class="token-str">"user"</span>,       <span class="token-comment">// edge starts here</span>
+      <span class="token-key">"to_column"</span>:    <span class="token-str">"machine"</span>,    <span class="token-comment">// edge ends here</span>
+      <span class="token-key">"label_column"</span>: <span class="token-str">"result"</span>,     <span class="token-comment">// text displayed on the edge</span>
+      <span class="token-key">"color_map"</span>: {
+        <span class="token-key">"Success"</span>: <span class="token-str">"#10b981"</span>,    <span class="token-comment">// green</span>
+        <span class="token-key">"Failure"</span>: <span class="token-str">"#ef4444"</span>     <span class="token-comment">// red</span>
+      },
+      <span class="token-key">"properties"</span>: [<span class="token-str">"timestamp"</span>, <span class="token-str">"src_ip"</span>]
+    }
+  ]
+}</code></pre>
+
+      <h3>Node properties</h3>
+      <table>
+        <thead><tr><th>Property</th><th>Required</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>id_column</code></td>  <td class="badge-req">Required</td><td>CSV column whose values become the unique node identifier and label</td></tr>
+          <tr><td><code>type</code></td>        <td class="badge-opt">Optional</td><td>Node icon — one of the <a href="#types" style="color:var(--accent)">supported types</a>. Defaults to <code>default</code> (gear icon)</td></tr>
+          <tr><td><code>type_column</code></td> <td class="badge-opt">Optional</td><td>Use a CSV column to set the type <em>per row</em> instead of a fixed value</td></tr>
+          <tr><td><code>label_column</code></td><td class="badge-opt">Optional</td><td>CSV column to use as the visible label (defaults to <code>id_column</code>)</td></tr>
+          <tr><td><code>properties</code></td>  <td class="badge-opt">Optional</td><td>Array of column names shown in the hover tooltip</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Edge properties</h3>
+      <table>
+        <thead><tr><th>Property</th><th>Required</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><code>from_column</code></td> <td class="badge-req">Required</td><td>CSV column for the source node</td></tr>
+          <tr><td><code>to_column</code></td>   <td class="badge-req">Required</td><td>CSV column for the target node</td></tr>
+          <tr><td><code>label_column</code></td><td class="badge-opt">Optional</td><td>CSV column whose value is printed on the edge arrow</td></tr>
+          <tr><td><code>label</code></td>        <td class="badge-opt">Optional</td><td>Static label string for all edges in this definition</td></tr>
+          <tr><td><code>color</code></td>        <td class="badge-opt">Optional</td><td>Default edge color as a hex string (e.g. <code>"#6b7280"</code>)</td></tr>
+          <tr><td><code>color_map</code></td>    <td class="badge-opt">Optional</td><td>Object mapping label values to colors — overrides <code>color</code> per row</td></tr>
+          <tr><td><code>properties</code></td>   <td class="badge-opt">Optional</td><td>Array of column names shown in the hover tooltip on the edge</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-tip">
+        <i class="fa-solid fa-lightbulb"></i>
+        <p>A single config can declare <strong>multiple node types and multiple edge types</strong>.
+           The engine processes every combination per CSV row, so one table can produce a rich
+           multi-entity graph in one shot.</p>
+      </div>
+    </div>
+
+    <!-- ─── Step 3 — Visualize ─── -->
+    <div class="section">
+      <span class="section-anchor" id="step3"></span>
+      <h2><span class="step-badge">3</span> Visualize</h2>
+
+      <p>Open the <strong>Editor</strong> by clicking the <i class="fa-solid fa-pen-to-square" style="color:var(--accent)"></i> <strong>Edit</strong>
+         button in the toolbar. The editor has two tabs:</p>
+
+      <table>
+        <thead><tr><th>Tab</th><th>Content</th></tr></thead>
+        <tbody>
+          <tr><td><code>Config (JSON)</code></td><td>Paste or type your JSON config here</td></tr>
+          <tr><td><code>Data (CSV)</code></td>    <td>Paste or type your CSV data here</td></tr>
+        </tbody>
+      </table>
+
+      <p>Once both tabs are filled, click <strong>Apply &amp; Visualize</strong> to render the graph.
+         Errors (missing columns, malformed JSON, etc.) are displayed inline so you can
+         fix them without leaving the editor.</p>
+
+      <div class="callout callout-info">
+        <i class="fa-solid fa-circle-info"></i>
+        <p>After visualizing, click the <strong>Visual</strong> tab in the editor to tweak node
+           types and edge colors using a point-and-click interface instead of editing JSON manually.</p>
+      </div>
+    </div>
+
+    <!-- ─── Wizard ─── -->
+    <div class="section">
+      <span class="section-anchor" id="wizard"></span>
+      <h2><i class="fa-solid fa-wand-magic-sparkles" style="color:var(--accent)"></i> Using the Build Graph Wizard</h2>
+
+      <p>If you prefer a guided experience, click <i class="fa-solid fa-wand-magic-sparkles" style="color:var(--accent)"></i>
+         <strong>Build Graph</strong> in the toolbar. The wizard walks you through the same three
+         steps above with interactive dropdowns and pickers.</p>
+
+      <div class="ui-hint">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        <div>
+          <strong>Wizard steps</strong><br/>
+          <span style="color:var(--text-dim);font-size:12px">
+            1 — Paste CSV &nbsp;·&nbsp;
+            2 — Pick node columns &amp; types &nbsp;·&nbsp;
+            3 — Pick edge columns &amp; colors &nbsp;·&nbsp;
+            4 — Preview &amp; render
+          </span>
+        </div>
+      </div>
+
+      <p>The wizard generates the JSON config automatically and hands it to the engine.
+         You can inspect the generated JSON at any time by switching to the Editor after
+         the graph is rendered.</p>
+    </div>
+
+    <!-- ─── Saving ─── -->
+    <div class="section">
+      <span class="section-anchor" id="save"></span>
+      <h2><i class="fa-solid fa-floppy-disk" style="color:var(--accent)"></i> Saving and exporting graphs</h2>
+
+      <p>Click the <i class="fa-solid fa-floppy-disk" style="color:var(--accent)"></i> icon in the
+         Editor header to save the current graph to <strong>My Graphs</strong>.
+         Saved graphs are persisted in <code>localStorage</code> and appear in the sidebar.</p>
+
+      <table>
+        <thead><tr><th>Action</th><th>How</th></tr></thead>
+        <tbody>
+          <tr><td>Save graph locally</td>    <td><i class="fa-solid fa-floppy-disk" style="color:var(--accent)"></i> button inside the Editor</td></tr>
+          <tr><td>Export a single graph</td> <td>Click the graph name in the sidebar → download icon</td></tr>
+          <tr><td>Export all graphs</td>     <td><i class="fa-solid fa-download" style="color:var(--accent)"></i> in the <em>My Graphs</em> section header</td></tr>
+          <tr><td>Import graphs</td>         <td><i class="fa-solid fa-folder-open" style="color:var(--accent)"></i> in the <em>My Graphs</em> section header — accepts <code>.json</code> bundle files</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-warn">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <p><code>localStorage</code> is browser-specific. Export your graphs as JSON files if you
+           want to share them with colleagues or keep a backup.</p>
+      </div>
+    </div>
+
+    <!-- ─── Advanced ─── -->
+    <div class="section">
+      <span class="section-anchor" id="advanced"></span>
+      <h2><i class="fa-solid fa-sliders" style="color:var(--accent)"></i> Advanced options</h2>
+
+      <h3>Dynamic node type from a column</h3>
+      <p>If your CSV has an <code>entity_type</code> column (e.g. <code>user</code>, <code>ip</code>, <code>machine</computing>),
+         use <code>type_column</code> instead of a fixed <code>type</code>:</p>
+      <pre><code>{
+  <span class="token-key">"id_column"</span>:   <span class="token-str">"entity"</span>,
+  <span class="token-key">"type_column"</span>: <span class="token-str">"entity_type"</span>   <span class="token-comment">// value per row drives the icon</span>
+}</code></pre>
+
+      <h3>Multiple node types in one graph</h3>
+      <pre><code><span class="token-key">"nodes"</span>: [
+  { <span class="token-key">"id_column"</span>: <span class="token-str">"alert_id"</span>, <span class="token-key">"type"</span>: <span class="token-str">"alert"</span> },
+  { <span class="token-key">"id_column"</span>: <span class="token-str">"user"</span>,     <span class="token-key">"type"</span>: <span class="token-str">"user"</span>  },
+  { <span class="token-key">"id_column"</span>: <span class="token-str">"machine"</span>,  <span class="token-key">"type"</span>: <span class="token-str">"machine"</span> }
+],
+<span class="token-key">"edges"</span>: [
+  { <span class="token-key">"from_column"</span>: <span class="token-str">"alert_id"</span>, <span class="token-key">"to_column"</span>: <span class="token-str">"user"</span>,    <span class="token-key">"label_column"</span>: <span class="token-str">"severity"</span> },
+  { <span class="token-key">"from_column"</span>: <span class="token-str">"alert_id"</span>, <span class="token-key">"to_column"</span>: <span class="token-str">"machine"</span>, <span class="token-key">"label_column"</span>: <span class="token-str">"severity"</span> }
+]</code></pre>
+
+      <h3>GQL filter bar</h3>
+      <p>Use the GQL bar at the bottom of the graph to filter nodes and edges without re-loading data.
+         See the <a href="#gql" style="color:var(--accent)">full GQL reference</a> below for the complete syntax.</p>
+
+      <h3>Collapse / expand groups</h3>
+      <p><strong>Double-click</strong> any node to collapse all its neighbours of the same type
+         into a single group node. Double-click the group to expand it again.</p>
+    </div>
+
+    <!-- ─── GQL ─── -->
+    <div class="section">
+      <span class="section-anchor" id="gql"></span>
+      <h2><i class="fa-solid fa-circle-nodes" style="color:var(--accent)"></i> GQL filter bar</h2>
+
+      <p>The GQL bar sits at the bottom of the graph canvas. Type a query and press
+         <kbd style="background:var(--bg-raise);border:1px solid var(--border);border-radius:3px;padding:1px 6px;font-size:12px">Enter</kbd>
+         (or click <strong>Run</strong>) to filter the visible graph.
+         Press <kbd style="background:var(--bg-raise);border:1px solid var(--border);border-radius:3px;padding:1px 6px;font-size:12px">Esc</kbd>
+         or click <strong>✕</strong> to restore the full graph.</p>
+
+      <div class="callout callout-info">
+        <i class="fa-solid fa-circle-info"></i>
+        <p>GQL filters act on the <em>already-rendered</em> graph — no CSV re-parsing, no page reload.
+           Nodes and edges that do not match are hidden; matching ones remain visible.</p>
+      </div>
+
+      <h3>Clause structure</h3>
+      <p>Every GQL query follows the same skeleton:</p>
+      <pre><code><span class="token-kql">MATCH</span> <span class="token-str">&lt;pattern&gt;</span> [<span class="token-kql">WHERE</span> <span class="token-str">&lt;condition&gt;</span> [<span class="token-kql">AND</span> <span class="token-str">&lt;condition&gt;</span> ...]] <span class="token-kql">RETURN</span> <span class="token-str">&lt;aliases&gt;</span></code></pre>
+
+      <h3>Pattern syntax</h3>
+      <table>
+        <thead><tr><th>Pattern</th><th>Meaning</th></tr></thead>
+        <tbody>
+          <tr><td><code>(n)</code></td><td>Any node, bound to alias <code>n</code></td></tr>
+          <tr><td><code>(n:user)</code></td><td>Any node whose type is <code>user</code></td></tr>
+          <tr><td><code>(a)-[r]->(b)</code></td><td>Any directed edge from <code>a</code> to <code>b</code>, relationship bound to <code>r</code></td></tr>
+          <tr><td><code>(a:user)-[r]->(b:machine)</code></td><td>Edge from a <code>user</code> node to a <code>machine</code> node</td></tr>
+        </tbody>
+      </table>
+
+      <h3>WHERE conditions</h3>
+      <p>Filter on node or edge properties using <code>alias.property</code> notation.
+         Multiple conditions are joined with <code>AND</code>.</p>
+      <table>
+        <thead><tr><th>Operator</th><th>Example</th><th>Matches when…</th></tr></thead>
+        <tbody>
+          <tr><td><code>=</code></td>          <td><code>n.id = 'alice'</code></td>          <td>value equals exactly (case-insensitive)</td></tr>
+          <tr><td><code>CONTAINS</code></td>   <td><code>n.id CONTAINS 'ali'</code></td>      <td>value contains the substring (case-insensitive)</td></tr>
+          <tr><td><code>STARTS WITH</code></td><td><code>n.id STARTS WITH 'srv'</code></td>   <td>value starts with the prefix (case-insensitive)</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Accessible properties</h3>
+      <table>
+        <thead><tr><th>Alias target</th><th>Property</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Node alias (e.g. <code>n</code>, <code>a</code>, <code>b</code>)</td><td><code>.id</code></td>   <td>Node identifier (the value from <code>id_column</code>)</td></tr>
+          <tr><td></td>                                                                  <td><code>.label</code></td><td>Displayed label</td></tr>
+          <tr><td></td>                                                                  <td><code>.type</code></td> <td>Node type string (e.g. <code>user</code>, <code>machine</code>)</td></tr>
+          <tr><td>Edge alias (e.g. <code>r</code>)</td>                                 <td><code>.label</code></td><td>Edge label (the value from <code>label_column</code>)</td></tr>
+        </tbody>
+      </table>
+
+      <h3>RETURN clause</h3>
+      <p>List the aliases you want to keep visible, separated by commas.
+         For node-only queries use the single node alias; for edge queries include both node
+         aliases and the relationship alias.</p>
+      <pre><code><span class="token-comment">// Node query — return the node alias</span>
+<span class="token-kql">MATCH (n:machine) RETURN n</span>
+
+<span class="token-comment">// Edge query — return both nodes and the edge</span>
+<span class="token-kql">MATCH (a)-[r]->(b) RETURN a,r,b</span></code></pre>
+
+      <h3>Examples</h3>
+
+      <pre><code><span class="token-comment">── Node queries ──────────────────────────────────────────────</span>
+
+<span class="token-comment">// All nodes</span>
+<span class="token-kql">MATCH (n) RETURN n</span>
+
+<span class="token-comment">// Only user nodes</span>
+<span class="token-kql">MATCH (n:user) RETURN n</span>
+
+<span class="token-comment">// Node whose ID equals a value exactly</span>
+<span class="token-kql">MATCH (n) WHERE n.id = 'alice@contoso.com' RETURN n</span>
+
+<span class="token-comment">// Nodes whose ID contains a substring</span>
+<span class="token-kql">MATCH (n) WHERE n.id CONTAINS 'srv' RETURN n</span>
+
+<span class="token-comment">// Machines whose label starts with 'SRV-DC'</span>
+<span class="token-kql">MATCH (n:machine) WHERE n.id STARTS WITH 'SRV-DC' RETURN n</span>
+
+<span class="token-comment">// Filter by type via WHERE (equivalent to :user in the pattern)</span>
+<span class="token-kql">MATCH (n) WHERE n.type = 'ip' RETURN n</span>
+
+
+<span class="token-comment">── Edge queries ──────────────────────────────────────────────</span>
+
+<span class="token-comment">// All edges</span>
+<span class="token-kql">MATCH (a)-[r]->(b) RETURN a,r,b</span>
+
+<span class="token-comment">// Edges from user to machine</span>
+<span class="token-kql">MATCH (a:user)-[r]->(b:machine) RETURN a,r,b</span>
+
+<span class="token-comment">// Only successful sign-ins</span>
+<span class="token-kql">MATCH (a)-[r]->(b) WHERE r.label = 'LogonSuccess' RETURN a,r,b</span>
+
+<span class="token-comment">// Failed logins originating from a specific user</span>
+<span class="token-kql">MATCH (a)-[r]->(b) WHERE a.id CONTAINS 'charlie' AND r.label = 'LogonFailed' RETURN a,r,b</span>
+
+<span class="token-comment">// Lateral movement to a specific server</span>
+<span class="token-kql">MATCH (a:machine)-[r]->(b:machine) WHERE b.id CONTAINS 'SRV-DC' RETURN a,r,b</span></code></pre>
+
+      <div class="callout callout-warn">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        <p>String values in GQL conditions must be wrapped in <strong>single quotes</strong> (<code>'value'</code>).
+           Double quotes are not supported.</p>
+      </div>
+    </div>
+
+    <!-- ─── KQL ─── -->
+    <div class="section">
+      <span class="section-anchor" id="kql"></span>
+      <h2><i class="fa-solid fa-database" style="color:var(--accent)"></i> Connecting to live Sentinel / Defender data</h2>
+
+      <p>You can embed a KQL query inside the config's <code>"query"</code> field.
+         The query is stored alongside the graph and can be viewed in-app via the
+         <strong>KQL</strong> button in the toolbar.</p>
+
+      <p>To populate the <code>csv</code> field with real data, follow these steps:</p>
+
+      <ol style="margin: 12px 0 12px 20px; display:flex; flex-direction:column; gap:8px;">
+        <li>Run each KQL query manually in <strong>Microsoft Defender XDR → Advanced Hunting</strong> or in <strong>Microsoft Sentinel → Logs</strong>.</li>
+        <li>Export the results as CSV using the <strong>Export</strong> button.</li>
+        <li>Rename the downloaded file to the <strong>exact graph name</strong> (e.g. <code>Identity Logon Map.csv</code>).</li>
+        <li>Place the file in the <code>data/</code> folder next to this project.</li>
+        <li>Run the PowerShell script — no parameters needed:</li>
+      </ol>
+
+      <pre><code><span class="token-comment"># Reads all CSVs from data/ and injects them into sentinel-graphs.json</span>
+<span class="token-kql">.\Update-SentinelGraphs.ps1</span></code></pre>
+
+      <p>The script matches each CSV filename (without extension) to the corresponding
+         graph name in <code>sentinel-graphs.json</code>, overwrites the <code>csv</code>
+         field with the file content, and saves the JSON. Reload <code>index.html</code>
+         to see the updated data.</p>
+
+      <div class="callout callout-info">
+        <i class="fa-solid fa-circle-info"></i>
+        <p>The <code>"query"</code> field in the config is purely informational — it is shown
+           in the KQL button tooltip but is never executed automatically.
+           Data only updates when you manually export a CSV and run the script.</p>
+      </div>
+    </div>
+
+    <!-- ─── Node types ─── -->
+    <div class="section">
+      <span class="section-anchor" id="types"></span>
+      <h2><i class="fa-solid fa-shapes" style="color:var(--accent)"></i> Supported node types</h2>
+
+      <p>Use any of these strings for the <code>type</code> property in your node config:</p>
+
+      <div class="type-grid">
+        <div class="type-chip"><i class="fa-solid fa-user"></i>user</div>
+        <div class="type-chip"><i class="fa-solid fa-desktop"></i>machine</div>
+        <div class="type-chip"><i class="fa-solid fa-globe"></i>ip</div>
+        <div class="type-chip"><i class="fa-solid fa-bolt"></i>alert</div>
+        <div class="type-chip"><i class="fa-solid fa-envelope"></i>email</div>
+        <div class="type-chip"><i class="fa-solid fa-file"></i>file</div>
+        <div class="type-chip"><i class="fa-solid fa-gears"></i>process</div>
+        <div class="type-chip"><i class="fa-solid fa-users"></i>group</div>
+        <div class="type-chip"><i class="fa-solid fa-cloud"></i>cloud</div>
+        <div class="type-chip"><i class="fa-solid fa-server"></i>server</div>
+        <div class="type-chip"><i class="fa-solid fa-link"></i>url</div>
+        <div class="type-chip"><i class="fa-solid fa-hashtag"></i>hash</div>
+        <div class="type-chip"><i class="fa-solid fa-database"></i>registry</div>
+        <div class="type-chip"><i class="fa-solid fa-sitemap"></i>domain</div>
+        <div class="type-chip"><i class="fa-solid fa-gear"></i>default</div>
+      </div>
+
+      <p>Any unknown type falls back to <code>default</code> (gear icon).</p>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // Highlight the active nav link based on scroll position
+  const anchors = document.querySelectorAll('.section-anchor');
+  const navLinks = document.querySelectorAll('nav a[href^="#"]');
+  window.addEventListener('scroll', () => {
+    let current = '';
+    anchors.forEach(a => {
+      if (window.scrollY >= a.offsetTop - 100) current = a.id;
+    });
+    navLinks.forEach(l => {
+      l.classList.toggle('active', l.getAttribute('href') === '#' + current);
+    });
+  }, { passive: true });
+</script>
+
+</body>
+</html>

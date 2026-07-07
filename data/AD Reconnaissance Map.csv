@@ -1,0 +1,9 @@
+timestamp,source_device,actor,query_type,queried_target,ip,dest_device
+2025-07-01 13:00,PC-BOB-01,bob,SamrEnumerateGroups,Domain Admins,10.1.2.8,SRV-DC-01
+2025-07-01 13:01,PC-BOB-01,bob,SamrEnumerateGroups,Enterprise Admins,10.1.2.8,SRV-DC-01
+2025-07-01 13:02,PC-BOB-01,bob,SamrQueryUser,alice,10.1.2.8,SRV-DC-01
+2025-07-01 13:03,PC-BOB-01,bob,SamrQueryUser,svc-backup,10.1.2.8,SRV-DC-01
+2025-07-01 13:10,PC-CHARLIE-01,charlie,Ldap query,Domain Admins,10.1.3.12,SRV-DC-01
+2025-07-01 13:11,PC-CHARLIE-01,charlie,Ldap query,krbtgt,10.1.3.12,SRV-DC-01
+2025-07-01 13:12,PC-CHARLIE-01,charlie,SamrLookupNames,Administrator,10.1.3.12,SRV-DC-01
+2025-07-01 13:20,SRV-FILE-01,SYSTEM,SamrEnumerateGroups,Backup Operators,10.1.5.10,SRV-DC-01

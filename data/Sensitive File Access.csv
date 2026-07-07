@@ -1,0 +1,9 @@
+timestamp,account,device,file,label,action,folder,process
+2025-07-01 08:00,alice,PC-ALICE-01,salary_data.xlsx,Highly Confidential,FileCreated,C:\Finance,excel.exe
+2025-07-01 08:30,alice,PC-ALICE-01,salary_data.xlsx,Highly Confidential,FileModified,C:\Finance,excel.exe
+2025-07-01 09:00,bob,PC-BOB-01,employee_pii.csv,Confidential,FileCreated,C:\HR,notepad.exe
+2025-07-01 09:30,charlie,PC-CHARLIE-01,salary_data.xlsx,Highly Confidential,FileCreated,C:\Users\charlie\Downloads,powershell.exe
+2025-07-01 09:31,charlie,PC-CHARLIE-01,credentials.txt,Confidential,FileCreated,C:\Users\charlie\AppData,powershell.exe
+2025-07-01 10:00,SYSTEM,SRV-FILE-01,backup_archive.tar,Internal,FileModified,C:\Backup,robocopy.exe
+2025-07-01 11:00,diana,PC-DIANA-01,public_report.pdf,Public,FileCreated,C:\Reports,acrobat.exe
+2025-07-01 12:00,bob,SRV-FILE-01,HR_Database.mdf,Highly Confidential,FileCreated,C:\SQL,sqlservr.exe

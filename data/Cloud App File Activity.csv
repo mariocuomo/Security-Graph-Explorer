@@ -1,0 +1,9 @@
+timestamp,user,app,action,object,ip,country,city
+2025-07-01 08:00,alice@contoso.com,SharePoint Online,FileDownloaded,Budget_2025.xlsx,10.1.1.5,IT,Rome
+2025-07-01 08:10,alice@contoso.com,OneDrive,FileUploaded,report_draft.docx,10.1.1.5,IT,Rome
+2025-07-01 09:00,bob@contoso.com,SharePoint Online,FileDownloaded,HR_Database.xlsx,10.1.2.8,DE,Berlin
+2025-07-01 09:05,bob@contoso.com,SharePoint Online,SharingSet,HR_Database.xlsx,10.1.2.8,DE,Berlin
+2025-07-01 09:30,charlie@contoso.com,OneDrive,FileDownloaded,source_code.zip,185.220.101.9,RU,Moscow
+2025-07-01 09:31,charlie@contoso.com,OneDrive,FileDownloaded,credentials.txt,185.220.101.9,RU,Moscow
+2025-07-01 10:00,diana@contoso.com,SharePoint Online,FileUploaded,Q3_report.pptx,10.1.4.3,FR,Paris
+2025-07-01 10:30,charlie@contoso.com,OneDrive,SharingSet,source_code.zip,185.220.101.9,RU,Moscow

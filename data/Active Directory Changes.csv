@@ -1,0 +1,9 @@
+timestamp,actor,target,action,device,target_device
+2025-07-01 09:00,Admin,alice,Add member to group,SRV-DC-01,
+2025-07-01 09:05,Admin,bob,Add member to group,SRV-DC-01,
+2025-07-01 10:00,Admin,charlie,User account password changed,SRV-DC-01,
+2025-07-01 10:30,charlie,svc-backup,Add member to group,PC-CHARLIE-01,
+2025-07-01 11:00,charlie,hacker,User account created,PC-CHARLIE-01,
+2025-07-01 11:05,charlie,hacker,Add member to group,PC-CHARLIE-01,
+2025-07-01 12:00,Admin,hacker,Remove member from group,SRV-DC-01,
+2025-07-01 12:01,Admin,hacker,User account deleted,SRV-DC-01,

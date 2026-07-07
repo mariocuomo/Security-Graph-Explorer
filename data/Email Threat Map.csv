@@ -1,0 +1,9 @@
+timestamp,sender,recipient,filename,filetype,threat_type,sha256
+2025-07-01 07:02,attacker@evil.io,alice@contoso.com,invoice_Q3.docm,DocM,Malware,3a4f9c1e2b7d8e0f
+2025-07-01 07:02,attacker@evil.io,bob@contoso.com,invoice_Q3.docm,DocM,Malware,3a4f9c1e2b7d8e0f
+2025-07-01 07:05,attacker@evil.io,charlie@contoso.com,invoice_Q3.docm,DocM,Malware,3a4f9c1e2b7d8e0f
+2025-07-01 09:14,phisher@fake-bank.com,alice@contoso.com,secure_document.html,HTML,Phishing,b1c2d3e4f5a6b7c8
+2025-07-01 09:14,phisher@fake-bank.com,diana@contoso.com,secure_document.html,HTML,Phishing,b1c2d3e4f5a6b7c8
+2025-07-01 11:30,bulk@promo.biz,bob@contoso.com,special_offer.pdf,PDF,Spam,0000000000000000
+2025-07-01 13:45,attacker2@darknet.ru,charlie@contoso.com,update_patch.exe,EXE,Malware,9f8e7d6c5b4a3210
+2025-07-01 13:45,attacker2@darknet.ru,eve@contoso.com,update_patch.exe,EXE,Malware,9f8e7d6c5b4a3210

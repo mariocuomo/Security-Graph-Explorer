@@ -1,0 +1,14 @@
+timestamp,user,app,result,risk_level,location,ip
+2025-07-01 08:00,alice@contoso.com,Microsoft Teams,Success,Success,London,10.1.1.5
+2025-07-01 08:05,alice@contoso.com,SharePoint Online,Success,Success,London,10.1.1.5
+2025-07-01 08:10,alice@contoso.com,Azure Portal,Success,Success,London,10.1.1.5
+2025-07-01 09:00,bob@contoso.com,Microsoft Teams,Success,Success,Berlin,10.1.2.8
+2025-07-01 09:05,bob@contoso.com,Exchange Online,Success,Success,Berlin,10.1.2.8
+2025-07-01 09:50,charlie@contoso.com,Azure Portal,Success,medium,Milan,10.1.3.12
+2025-07-01 10:00,charlie@contoso.com,Azure Portal,Failure,Failure,TorExitNode,185.220.101.9
+2025-07-01 10:01,charlie@contoso.com,Azure Portal,Failure,high,TorExitNode,185.220.101.9
+2025-07-01 10:05,charlie@contoso.com,SharePoint Online,Success,high,TorExitNode,185.220.101.9
+2025-07-01 11:00,diana@contoso.com,Microsoft Teams,Success,Success,Paris,10.1.4.3
+2025-07-01 11:10,diana@contoso.com,Power BI,Success,low,Paris,10.1.4.3
+2025-07-01 12:00,eve@contoso.com,Azure Portal,Failure,Failure,Beijing,203.0.113.88
+2025-07-01 12:01,eve@contoso.com,Exchange Online,Failure,Failure,Beijing,203.0.113.88
