@@ -1,8 +1,0 @@
-timestamp,admin,app,action,object,object_type,ip,country
-2025-07-01 09:00,Global Admin,Azure Active Directory,AddUser,alice@contoso.com,User,10.0.0.1,IT
-2025-07-01 09:05,Global Admin,Azure Active Directory,AddMember,Domain Admins,Group,10.0.0.1,IT
-2025-07-01 09:10,Global Admin,Microsoft 365 Admin,AssignLicense,bob@contoso.com,User,10.0.0.1,IT
-2025-07-01 10:00,charlie@contoso.com,Azure Active Directory,AddUser,backdoor@contoso.com,User,185.220.101.9,RU
-2025-07-01 10:01,charlie@contoso.com,Azure Active Directory,AddMember,Global Administrators,Group,185.220.101.9,RU
-2025-07-01 10:05,charlie@contoso.com,Exchange Online,SetMailboxPermission,Global Inbox,Mailbox,185.220.101.9,RU
-2025-07-01 11:00,Security Admin,Microsoft Defender,UpdatePolicy,Antivirus Policy,Policy,10.0.0.2,IT

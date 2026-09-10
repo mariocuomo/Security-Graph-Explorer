@@ -1,8 +1,0 @@
-timestamp,user,upn,risk_event_type,risk_level,risk_state,ip,detection_type
-2025-07-01 08:00,Charlie Brown,charlie@contoso.com,anonymizedIPAddress,high,atRisk,185.220.101.9,realtime
-2025-07-01 08:05,Charlie Brown,charlie@contoso.com,unfamiliarFeatures,medium,atRisk,185.220.101.9,realtime
-2025-07-01 09:00,Bob Johnson,bob@contoso.com,suspiciousInboxForwarding,medium,atRisk,10.1.2.8,offline
-2025-07-01 10:00,Eve Wilson,eve@contoso.com,anonymizedIPAddress,high,atRisk,203.0.113.88,realtime
-2025-07-01 10:05,Eve Wilson,eve@contoso.com,maliciousIPAddress,high,atRisk,203.0.113.88,realtime
-2025-07-01 11:00,Alice Smith,alice@contoso.com,leakedCredentials,high,remediated,10.1.1.5,offline
-2025-07-01 12:00,Diana Prince,diana@contoso.com,unlikelyTravel,low,dismissed,10.1.4.3,offline
