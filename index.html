@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Security Graph Explorer turns Microsoft Defender XDR Advanced Hunting results into interactive investigation graphs.">
+  <meta name="theme-color" content="#101216">
+  <meta property="og:title" content="Security Graph Explorer">
+  <meta property="og:description" content="See the relationships hidden in Microsoft Defender XDR hunting results.">
+  <meta property="og:type" content="website">
+  <title>Security Graph Explorer</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <div class="scroll-progress" aria-hidden="true"></div>
+  <!-- Add an anonymized screenshot as assets/security-graph-explorer.png when it is ready. -->
+  <header class="topbar">
+    <nav class="nav wrap" aria-label="Main navigation">
+      <a class="brand" href="#top"><img src="assets/logo.svg" alt=""><span>Security Graph Explorer</span></a>
+      <div class="nav-links">
+        <a href="#get-started">Get Started</a>
+        <a href="#download">Download the Software</a>
+        <a href="#features">Features</a>
+        <a href="#creator">Meet the creator</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <canvas id="graph-canvas" aria-hidden="true"></canvas>
+      <div class="hero-glow" aria-hidden="true"></div>
+      <div class="wrap">
+        <div class="hero-copy">
+          <a class="hero-announcement" href="#download">
+            <span class="dot" aria-hidden="true"></span>
+            Coming to the Microsoft Store · December 1, 2026
+          </a>
+          <div class="eyebrow">Native graph investigation for Windows</div>
+          <h1>Security Graph Explorer</h1>
+          <p class="lede">Turn Microsoft Defender XDR Advanced Hunting results into navigable relationship graphs. Follow devices, identities, processes, URLs, and evidence without losing the query behind the picture.</p>
+          <div class="actions">
+            <a class="button primary" href="#get-started">Get started</a>
+            <a class="button" href="#product">Explore the product</a>
+          </div>
+          <div class="hero-meta">
+            <span>Windows</span><span>.NET MAUI</span><span>Microsoft Defender XDR</span><span>Open source preview</span>
+          </div>
+        </div>
+      </div>
+      <a class="scroll-cue" href="#product">Explore</a>
+    </section>
+
+    <section class="product section-rise" id="product">
+      <div class="wrap">
+        <div class="section-head reveal">
+          <h2>From hunting rows to investigation context.</h2>
+          <p>Run a KQL query, map its output columns, and inspect the resulting entities and relationships on a native canvas. Reusable graph templates keep common investigations close at hand.</p>
+        </div>
+        <div class="screen reveal" id="product-screen">
+          <img src="assets/POV.png" alt="Security Graph Explorer showing alert evidence connected to a device and remote IP address">
+        </div>
+      </div>
+    </section>
+
+    <section id="get-started" aria-label="Get started">
+      <div>
+        <div class="get-started">
+          <div class="wrap">
+            <div class="get-started-head reveal">
+              <div><div class="eyebrow">Get started</div><h2>See it. Set it up. Make it yours.</h2></div>
+              <p>Everything you need is here. Expand each step to explore the workflow and configure access to your tenant.</p>
+            </div>
+            <div class="start-accordion">
+              <details class="start-panel" open>
+                <summary><span class="start-index">01 / DEMO</span><span class="start-summary"><strong>Explore the workflow</strong><span>A guided look at an investigation from query to evidence.</span></span><span class="expand-icon" aria-hidden="true">+</span></summary>
+                <div class="panel-content"><p class="panel-intro">The live application turns tabular hunting results into a navigable security graph. This walkthrough uses synthetic entities and makes no network requests.</p><div class="demo-steps">
+                  <div class="demo-step"><span>01</span><strong>Choose a graph</strong><p>Select a reusable definition containing its KQL and entity mapping.</p></div><div class="demo-step"><span>02</span><strong>Run the query</strong><p>Execute Advanced Hunting through Microsoft Graph with delegated access.</p></div><div class="demo-step"><span>03</span><strong>Follow relationships</strong><p>Navigate connections between alerts, devices, identities, and IPs.</p></div><div class="demo-step"><span>04</span><strong>Inspect evidence</strong><p>Select an entity to review mapped properties and connected evidence.</p></div>
+                </div></div>
+              </details>
+              <details class="start-panel">
+                <summary><span class="start-index">02 / SETUP</span><span class="start-summary"><strong>Connect your tenant</strong><span>Configure delegated access to Defender XDR.</span></span><span class="expand-icon" aria-hidden="true">+</span></summary>
+                <div class="panel-content"><p class="panel-intro">You need Windows 10 1809 or later, Defender XDR Advanced Hunting access, and permission to register or request an application in Microsoft Entra.</p><div class="setup-list">
+                  <div class="setup-item"><span>01 / REGISTER</span><h3>Create a public client application</h3><p>Create an app registration for accounts in your organization.</p></div><div class="setup-item"><span>02 / AUTHENTICATE</span><h3>Configure desktop authentication</h3><p>Add the desktop redirect URI and enable public client flows.</p></div><div class="setup-item"><span>03 / AUTHORIZE</span><h3>Grant delegated access</h3><p>Add ThreatHunting.Read.All and obtain consent according to tenant policy.</p></div><div class="setup-item"><span>04 / CONNECT</span><h3>Sign in from the app</h3><p>Enter tenant ID and client ID in Settings, sign in, then execute a graph.</p></div>
+                </div><div class="setup-values"><code>Redirect: http://localhost</code><code>ThreatHunting.Read.All</code><code>No client secret</code></div></div>
+              </details>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="download section-rise" id="download">
+      <div class="wrap download-center reveal">
+        <div class="eyebrow">Download the software</div>
+        <p class="release-date">December 1, 2026</p>
+        <h2>Landing in the Microsoft Store.</h2>
+        <p>Security Graph Explorer is on track to publish as a signed Microsoft Store app for a secure, straightforward installation experience. Release details will be published here as launch day approaches.</p>
+        <span class="download-status">Microsoft Store</span>
+      </div>
+    </section>
+
+    <section class="features section-rise reverse" id="features">
+      <div class="wrap">
+        <div class="eyebrow reveal">Investigation workflow</div>
+        <h2 class="reveal">Built for the path from query to evidence.</h2>
+        <div class="feature-grid">
+          <article class="feature reveal"><span class="feature-index">01 / QUERY</span><h3>Run Advanced Hunting</h3><p>Use delegated Microsoft Graph access to execute Defender XDR hunting queries with cancellation, timeout handling, and bounded responses.</p></article>
+          <article class="feature reveal"><span class="feature-index">02 / MAP</span><h3>Define relationships</h3><p>Choose source, target, label, entity kinds, and properties. Save the mapping as a reusable graph template.</p></article>
+          <article class="feature reveal"><span class="feature-index">03 / EXPLORE</span><h3>Navigate the graph</h3><p>Zoom, filter, inspect nodes, expand grouped relationships, and optionally use timeline and GQL exploration tools.</p></article>
+          <article class="feature reveal"><span class="feature-index">04 / LIBRARY</span><h3>Build a shared library</h3><p>Create, import, export, organize, and enable graph definitions using versioned <code>.sggraph</code> bundles.</p></article>
+          <article class="feature reveal"><span class="feature-index">05 / LOCAL</span><h3>Native Windows experience</h3><p>A focused .NET MAUI desktop interface with light and dark themes, protected authentication cache, and no WebView graph renderer.</p></article>
+          <article class="feature reveal"><span class="feature-index">06 / PREVIEW</span><h3>Shape the roadmap</h3><p>The project is in active preview. Community feedback on investigations, usability, accessibility, and graph templates is especially valuable.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="access section-rise" id="access">
+      <div class="wrap access-grid">
+        <h2 class="reveal from-left">Bring your own Microsoft Entra application.</h2>
+        <div class="reveal from-right">
+          <p>Security Graph Explorer uses delegated access. You remain in control of the tenant, application registration, sign-in, and data permissions.</p>
+          <code>ThreatHunting.Read.All</code>
+          <p>Requires Windows, access to Microsoft Defender XDR Advanced Hunting, and an Entra application configured for public client authentication.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="creator section-rise reverse" id="creator">
+      <div class="wrap creator-grid">
+        <div class="creator-mark reveal from-left">
+          <img src="assets/Mario.jpeg" alt="Illustration of Mario Cuomo">
+        </div>
+        <div class="reveal from-right">
+          <div class="eyebrow">Meet the creator</div>
+          <h2>Mario Cuomo</h2>
+          <p class="creator-role">Cloud Solutions Architect · Microsoft Security</p>
+          <p class="creator-copy">I built Security Graph Explorer to make the relationships inside Defender XDR hunting results easier to see, investigate, and share. It is a personal open-source project shaped by practical security investigation workflows and a belief that useful tools should remain understandable.</p>
+          <div class="creator-actions">
+            <a class="button" href="https://www.linkedin.com/in/mariocuomo/" aria-label="Connect with Mario Cuomo on LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12Zm1.78 13.02H3.56V9h3.56v11.45ZM22.23 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.46c.98 0 1.77-.77 1.77-1.73V1.73C24 .77 23.21 0 22.23 0Z"/></svg><span>Connect on LinkedIn</span></a>
+          </div>
+          <p class="creator-note">This is an independent personal project and does not represent an official Microsoft product or commitment.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="community section-rise" id="community">
+      <div class="wrap reveal">
+        <div class="eyebrow">Community preview</div>
+        <h2>Help make investigations clearer.</h2>
+        <p>Try the current build, share the graph workflows your team needs, report rough edges, or contribute a reusable template.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner wrap"><span>Security Graph Explorer · Community preview</span><span>Not an official Microsoft product.</span></div>
+  </footer>
+
+  <script src="assets/script.js"></script>
+</body>
+</html>

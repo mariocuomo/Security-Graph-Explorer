@@ -1,0 +1,16 @@
+<svg width="456" height="456" viewBox="0 0 456 456" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title">
+  <title id="title">Security Graph Explorer logo</title>
+  <rect width="456" height="456" rx="92" fill="#11121d"/>
+  <path d="M228 48L374 106V212C374 304 315 376 228 408C141 376 82 304 82 212V106L228 48Z" fill="#ff5a57"/>
+  <path d="M228 78L346 125V212C346 285 301 344 228 374C155 344 110 285 110 212V125L228 78Z" fill="#17191f"/>
+  <g fill="none" stroke="#ff5a57" stroke-width="16" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M164 174L228 226L299 157M228 226L286 294M164 174L286 294"/>
+  </g>
+  <g fill="#fff" stroke="#17191f" stroke-width="8">
+    <circle cx="164" cy="174" r="25"/>
+    <circle cx="299" cy="157" r="25"/>
+    <circle cx="228" cy="226" r="29"/>
+    <circle cx="286" cy="294" r="25"/>
+  </g>
+  <circle cx="228" cy="226" r="11" fill="#ff5a57"/>
+</svg>
