@@ -1,0 +1,68 @@
+[
+  {
+    "folder": "device-remote-connections",
+    "name": "Device remote connections",
+    "description": "Connects Defender devices to remote IP addresses observed during the last seven days.",
+    "author": "Mario Cuomo",
+    "githubHandle": "mariocuomo",
+    "submittedDate": "2026-09-20",
+    "tags": ["network", "devices"],
+    "graphFile": "graph.sggraph",
+    "rawUrl": "https://raw.githubusercontent.com/mariocuomo/Security-Graph-Explorer/main/docs/community-graphs/device-remote-connections/graph.sggraph"
+  },
+  {
+    "folder": "device-to-ip",
+    "name": "Device to IP",
+    "description": "Devices connected to remote IP addresses.",
+    "author": "Mario Cuomo",
+    "githubHandle": "mariocuomo",
+    "submittedDate": "2026-09-20",
+    "tags": ["network", "devices"],
+    "graphFile": "graph.sggraph",
+    "rawUrl": "https://raw.githubusercontent.com/mariocuomo/Security-Graph-Explorer/main/docs/community-graphs/device-to-ip/graph.sggraph"
+  },
+  {
+    "folder": "user-to-device",
+    "name": "User to device",
+    "description": "Users signing in to devices.",
+    "author": "Mario Cuomo",
+    "githubHandle": "mariocuomo",
+    "submittedDate": "2026-09-20",
+    "tags": ["identity", "sign-in"],
+    "graphFile": "graph.sggraph",
+    "rawUrl": "https://raw.githubusercontent.com/mariocuomo/Security-Graph-Explorer/main/docs/community-graphs/user-to-device/graph.sggraph"
+  },
+  {
+    "folder": "parent-to-child-process",
+    "name": "Parent to child process",
+    "description": "Parent processes starting child processes.",
+    "author": "Mario Cuomo",
+    "githubHandle": "mariocuomo",
+    "submittedDate": "2026-09-20",
+    "tags": ["process", "endpoint"],
+    "graphFile": "graph.sggraph",
+    "rawUrl": "https://raw.githubusercontent.com/mariocuomo/Security-Graph-Explorer/main/docs/community-graphs/parent-to-child-process/graph.sggraph"
+  },
+  {
+    "folder": "email-sender-to-recipient",
+    "name": "Email sender to recipient",
+    "description": "Email senders connected to recipients.",
+    "author": "Mario Cuomo",
+    "githubHandle": "mariocuomo",
+    "submittedDate": "2026-09-20",
+    "tags": ["email", "phishing"],
+    "graphFile": "graph.sggraph",
+    "rawUrl": "https://raw.githubusercontent.com/mariocuomo/Security-Graph-Explorer/main/docs/community-graphs/email-sender-to-recipient/graph.sggraph"
+  },
+  {
+    "folder": "user-to-url",
+    "name": "User to URL",
+    "description": "Users connected to clicked URLs.",
+    "author": "Mario Cuomo",
+    "githubHandle": "mariocuomo",
+    "submittedDate": "2026-09-20",
+    "tags": ["web", "urls"],
+    "graphFile": "graph.sggraph",
+    "rawUrl": "https://raw.githubusercontent.com/mariocuomo/Security-Graph-Explorer/main/docs/community-graphs/user-to-url/graph.sggraph"
+  }
+]

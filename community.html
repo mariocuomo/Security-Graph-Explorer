@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Browse graph templates shared by the Security Graph Explorer community and import them with one click.">
+  <meta name="author" content="Mario Cuomo">
+  <meta name="theme-color" content="#101216">
+  <meta property="og:title" content="Community graphs · Security Graph Explorer">
+  <meta property="og:description" content="Browse graph templates shared by the Security Graph Explorer community and import them with one click.">
+  <meta property="og:type" content="website">
+  <title>Community graphs · Security Graph Explorer</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <div class="scroll-progress" aria-hidden="true"></div>
+  <header class="topbar">
+    <nav class="nav wrap" aria-label="Main navigation">
+      <a class="brand" href="index.html#top"><img src="assets/logo.svg" alt=""><span>Security Graph Explorer</span></a>
+      <div class="nav-links">
+        <a href="index.html#how-it-works">How it works</a>
+        <a href="index.html#get-started">Get Started</a>
+        <a href="index.html#download">Download the Software</a>
+        <a href="index.html#features">Features</a>
+        <a href="index.html#creator">Meet the creator</a>
+        <a href="community.html">Community</a>
+        <a href="faq.html">FAQ</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="wrap reveal">
+        <div class="eyebrow">Community</div>
+        <h1>Graphs shared by the community.</h1>
+        <p>Browse graph templates contributed by other users. Copy the import link, paste it in the app, and start investigating.</p>
+      </div>
+    </section>
+
+    <section class="community-list" aria-label="Community graphs">
+      <div class="wrap">
+        <div class="community-toolbar">
+          <input type="search" id="community-search-input" placeholder="Search graphs…" aria-label="Search community graphs">
+          <a class="button" href="https://github.com/mariocuomo/Security-Graph-Explorer/tree/main/docs/community-graphs" target="_blank" rel="noopener">Submit a graph</a>
+        </div>
+        <div id="community-grid" class="community-grid" aria-live="polite"></div>
+        <p id="community-empty" class="community-empty">No matching graphs. Try a different search term.</p>
+        <p id="community-error" class="community-empty">Couldn't load the community index right now. Please try again later.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner wrap"><span>Security Graph Explorer · Community preview</span><span>Not an official Microsoft product.</span></div>
+  </footer>
+
+  <script src="assets/script.js"></script>
+  <script src="assets/community.js"></script>
+</body>
+</html>
