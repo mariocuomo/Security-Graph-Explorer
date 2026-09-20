@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Frequently asked questions about Security Graph Explorer: access, permissions, data, and availability.">
+  <meta name="theme-color" content="#101216">
+  <meta property="og:title" content="FAQ · Security Graph Explorer">
+  <meta property="og:description" content="Answers about access, permissions, data, and what to expect from the preview.">
+  <meta property="og:type" content="website">
+  <title>FAQ · Security Graph Explorer</title>
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <div class="scroll-progress" aria-hidden="true"></div>
+  <header class="topbar">
+    <nav class="nav wrap" aria-label="Main navigation">
+      <a class="brand" href="index.html#top"><img src="assets/logo.svg" alt=""><span>Security Graph Explorer</span></a>
+      <div class="nav-links">
+        <a href="index.html#how-it-works">How it works</a>
+        <a href="index.html#get-started">Get Started</a>
+        <a href="index.html#download">Download the Software</a>
+        <a href="index.html#features">Features</a>
+        <a href="index.html#creator">Meet the creator</a>
+        <a href="faq.html">FAQ</a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <section class="page-hero">
+      <div class="wrap reveal">
+        <div class="eyebrow">FAQ</div>
+        <h1>Frequently asked questions.</h1>
+        <p>Answers about access, permissions, data, and what to expect from the community preview.</p>
+      </div>
+    </section>
+
+    <section class="faq-list" aria-label="Frequently asked questions">
+      <div class="wrap">
+        <div class="faq-search">
+          <input type="search" id="faq-search-input" placeholder="Search questions…" aria-label="Search frequently asked questions">
+        </div>
+        <div class="start-accordion">
+          <details class="start-panel" open>
+            <summary><span class="start-index">01</span><span class="start-summary"><strong>What is Security Graph Explorer?</strong></span><span class="expand-icon" aria-hidden="true">+</span></summary>
+            <div class="panel-content"><p class="panel-intro">A native Windows application that turns Microsoft Defender XDR Advanced Hunting results into navigable investigation graphs, so you can follow relationships between devices, identities, IPs, and evidence without losing the query behind the picture.</p></div>
+          </details>
+          <details class="start-panel">
+            <summary><span class="start-index">02</span><span class="start-summary"><strong>Is this an official Microsoft product?</strong></span><span class="expand-icon" aria-hidden="true">+</span></summary>
+            <div class="panel-content"><p class="panel-intro">No. It is an independent, personal open-source project. It is not affiliated with, endorsed by, or sponsored by Microsoft.</p></div>
+          </details>
+          <details class="start-panel">
+            <summary><span class="start-index">03</span><span class="start-summary"><strong>What access does it need?</strong></span><span class="expand-icon" aria-hidden="true">+</span></summary>
+            <div class="panel-content"><p class="panel-intro">Delegated Microsoft Graph access with the <code>ThreatHunting.Read.All</code> permission. You bring your own Microsoft Entra application; there is no client secret and no shared backend.</p></div>
+          </details>
+          <details class="start-panel">
+            <summary><span class="start-index">04</span><span class="start-summary"><strong>Where does my data go?</strong></span><span class="expand-icon" aria-hidden="true">+</span></summary>
+            <div class="panel-content"><p class="panel-intro">Nowhere but your own tenant. Queries run through Microsoft Graph using your delegated credentials, and results stay on your device.</p></div>
+          </details>
+          <details class="start-panel">
+            <summary><span class="start-index">05</span><span class="start-summary"><strong>What is a .sggraph file?</strong></span><span class="expand-icon" aria-hidden="true">+</span></summary>
+            <div class="panel-content"><p class="panel-intro">A versioned bundle that stores a graph definition: its KQL query, column mapping, and display settings, so you can save, share, and reuse investigations.</p></div>
+          </details>
+          <details class="start-panel">
+            <summary><span class="start-index">06</span><span class="start-summary"><strong>Do I need to know KQL to use it?</strong></span><span class="expand-icon" aria-hidden="true">+</span></summary>
+            <div class="panel-content"><p class="panel-intro">Basic familiarity helps if you want to write custom queries, but the app ships with reusable graph templates so you can start investigating without writing KQL yourself.</p></div>
+          </details>
+          <details class="start-panel">
+            <summary><span class="start-index">07</span><span class="start-summary"><strong>When will it be available?</strong></span><span class="expand-icon" aria-hidden="true">+</span></summary>
+            <div class="panel-content"><p class="panel-intro">Security Graph Explorer is on track to publish as a Microsoft Store app on December 1, 2026. Until then, it is in active community preview.</p></div>
+          </details>
+          <details class="start-panel">
+            <summary><span class="start-index">08</span><span class="start-summary"><strong>Is it free?</strong></span><span class="expand-icon" aria-hidden="true">+</span></summary>
+            <div class="panel-content"><p class="panel-intro">Yes. It is a free, open-source preview project.</p></div>
+          </details>
+          <details class="start-panel">
+            <summary><span class="start-index">09</span><span class="start-summary"><strong>How can I give feedback or contribute?</strong></span><span class="expand-icon" aria-hidden="true">+</span></summary>
+            <div class="panel-content"><p class="panel-intro">Reach out through the creator's LinkedIn, linked from the <a href="index.html#creator">Meet the creator</a> section, with ideas, issues, or graph templates you would like to share.</p></div>
+          </details>
+        </div>
+        <p class="faq-empty">No matching questions. Try a different search term.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-inner wrap"><span>Security Graph Explorer · Community preview</span><span>Not an official Microsoft product.</span></div>
+  </footer>
+
+  <script src="assets/script.js"></script>
+</body>
+</html>

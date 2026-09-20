@@ -22,10 +22,12 @@
     <nav class="nav wrap" aria-label="Main navigation">
       <a class="brand" href="#top"><img src="assets/logo.svg" alt=""><span>Security Graph Explorer</span></a>
       <div class="nav-links">
+        <a href="#how-it-works">How it works</a>
         <a href="#get-started">Get Started</a>
         <a href="#download">Download the Software</a>
         <a href="#features">Features</a>
         <a href="#creator">Meet the creator</a>
+        <a href="faq.html">FAQ</a>
       </div>
     </nav>
   </header>
@@ -35,20 +37,21 @@
       <canvas id="graph-canvas" aria-hidden="true"></canvas>
       <div class="hero-glow" aria-hidden="true"></div>
       <div class="wrap">
+        <a class="hero-badge" href="#download">
+          <span class="dot" aria-hidden="true"></span>
+          Coming to the Microsoft Store
+        </a>
         <div class="hero-copy">
-          <a class="hero-announcement" href="#download">
-            <span class="dot" aria-hidden="true"></span>
-            Coming to the Microsoft Store · December 1, 2026
-          </a>
-          <div class="eyebrow">Native graph investigation for Windows</div>
+          <div class="eyebrow">Native graph investigation</div>
           <h1>Security Graph Explorer</h1>
+          <p class="hero-why">Tabular hunting results hide relationships. This makes them visible.</p>
           <p class="lede">Turn Microsoft Defender XDR Advanced Hunting results into navigable relationship graphs. Follow devices, identities, processes, URLs, and evidence without losing the query behind the picture.</p>
           <div class="actions">
             <a class="button primary" href="#get-started">Get started</a>
             <a class="button" href="#product">Explore the product</a>
           </div>
           <div class="hero-meta">
-            <span>Windows</span><span>.NET MAUI</span><span>Microsoft Defender XDR</span><span>Open source preview</span>
+            <span>Windows</span><span>Microsoft Defender XDR</span><span>Open source preview</span>
           </div>
         </div>
       </div>
@@ -63,6 +66,102 @@
         </div>
         <div class="screen reveal" id="product-screen">
           <img src="assets/POV.png" alt="Security Graph Explorer showing alert evidence connected to a device and remote IP address">
+        </div>
+      </div>
+    </section>
+
+    <section class="process section-rise" id="how-it-works">
+      <div class="wrap">
+        <div class="process-head reveal">
+          <div>
+            <div class="eyebrow">How it works</div>
+            <h2>From a hunting query to an investigation graph.</h2>
+          </div>
+          <p>Security Graph Explorer keeps the path from raw Advanced Hunting results to actionable context visible at every step.</p>
+        </div>
+        <div class="process-flow" aria-label="Security Graph Explorer workflow">
+          <article class="process-step reveal">
+            <span class="process-index">01 / INPUT</span>
+            <div class="step-viz viz-table" aria-hidden="true">
+              <span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span>
+              <span></span><span></span><span></span><span></span>
+            </div>
+            <h3>Query KQL</h3>
+            <p>Run a Defender XDR Advanced Hunting query and receive bounded tabular results.</p>
+          </article>
+          <div class="process-arrow" aria-hidden="true">&gt;</div>
+          <article class="process-step reveal">
+            <span class="process-index">02 / TRANSFORM</span>
+            <div class="step-viz viz-gear" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle class="gear-hub" cx="12" cy="12" r="3"/>
+                <path class="gear-teeth" d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+              </svg>
+            </div>
+            <h3>Graph transformations</h3>
+            <p>Map columns to entities, relationships, labels, and properties through a reusable graph definition.</p>
+          </article>
+          <div class="process-arrow" aria-hidden="true">&gt;</div>
+          <article class="process-step reveal">
+            <span class="process-index">03 / RENDER</span>
+            <div class="step-viz viz-graph" aria-hidden="true">
+              <svg viewBox="0 0 220 100" preserveAspectRatio="xMidYMid meet">
+                <line class="vedge" x1="110" y1="50" x2="195" y2="50"/>
+                <line class="vedge" x1="110" y1="50" x2="153" y2="80"/>
+                <line class="vedge" x1="110" y1="50" x2="68" y2="80"/>
+                <line class="vedge" x1="110" y1="50" x2="25" y2="50"/>
+                <line class="vedge" x1="110" y1="50" x2="68" y2="20"/>
+                <line class="vedge" x1="110" y1="50" x2="153" y2="20"/>
+                <circle class="vnode hub" cx="110" cy="50" r="8"/>
+                <circle class="vnode" cx="195" cy="50" r="7"/>
+                <circle class="vnode" cx="153" cy="80" r="7"/>
+                <circle class="vnode" cx="68" cy="80" r="7"/>
+                <circle class="vnode" cx="25" cy="50" r="7"/>
+                <circle class="vnode" cx="68" cy="20" r="7"/>
+                <circle class="vnode" cx="153" cy="20" r="7"/>
+                <text class="vlabel hub-label" x="110" y="53">IP</text>
+                <text class="vlabel" x="195" y="53">D</text>
+                <text class="vlabel" x="153" y="83">U</text>
+                <text class="vlabel" x="68" y="83">D</text>
+                <text class="vlabel" x="25" y="53">U</text>
+                <text class="vlabel" x="68" y="23">D</text>
+                <text class="vlabel" x="153" y="23">U</text>
+              </svg>
+            </div>
+            <h3>Graph rendering</h3>
+            <p>Turn the mapped rows into a navigable graph where connected evidence becomes visible.</p>
+          </article>
+          <div class="process-arrow" aria-hidden="true">&gt;</div>
+          <article class="process-step reveal">
+            <span class="process-index">04 / INVESTIGATE</span>
+            <div class="step-viz viz-graph viz-path" aria-hidden="true">
+              <svg viewBox="0 0 220 100" preserveAspectRatio="xMidYMid meet">
+                <line class="vedge active" x1="110" y1="50" x2="195" y2="50"/>
+                <line class="vedge active" x1="110" y1="50" x2="153" y2="80"/>
+                <line class="vedge dim" x1="110" y1="50" x2="68" y2="80"/>
+                <line class="vedge dim" x1="110" y1="50" x2="25" y2="50"/>
+                <line class="vedge dim" x1="110" y1="50" x2="68" y2="20"/>
+                <line class="vedge dim" x1="110" y1="50" x2="153" y2="20"/>
+                <circle class="vnode hub active" cx="110" cy="50" r="8"/>
+                <circle class="vnode active" cx="195" cy="50" r="7"/>
+                <circle class="vnode active" cx="153" cy="80" r="7"/>
+                <circle class="vnode dim" cx="68" cy="80" r="7"/>
+                <circle class="vnode dim" cx="25" cy="50" r="7"/>
+                <circle class="vnode dim" cx="68" cy="20" r="7"/>
+                <circle class="vnode dim" cx="153" cy="20" r="7"/>
+                <text class="vlabel hub-label active" x="110" y="53">IP</text>
+                <text class="vlabel active" x="195" y="53">D</text>
+                <text class="vlabel active" x="153" y="83">U</text>
+                <text class="vlabel dim" x="68" y="83">D</text>
+                <text class="vlabel dim" x="25" y="53">U</text>
+                <text class="vlabel dim" x="68" y="23">D</text>
+                <text class="vlabel dim" x="153" y="23">U</text>
+              </svg>
+            </div>
+            <h3>Analysis</h3>
+            <p>Inspect nodes, follow paths, filter relationships, and keep the original evidence in context.</p>
+          </article>
         </div>
       </div>
     </section>
@@ -113,7 +212,7 @@
           <article class="feature reveal"><span class="feature-index">02 / MAP</span><h3>Define relationships</h3><p>Choose source, target, label, entity kinds, and properties. Save the mapping as a reusable graph template.</p></article>
           <article class="feature reveal"><span class="feature-index">03 / EXPLORE</span><h3>Navigate the graph</h3><p>Zoom, filter, inspect nodes, expand grouped relationships, and optionally use timeline and GQL exploration tools.</p></article>
           <article class="feature reveal"><span class="feature-index">04 / LIBRARY</span><h3>Build a shared library</h3><p>Create, import, export, organize, and enable graph definitions using versioned <code>.sggraph</code> bundles.</p></article>
-          <article class="feature reveal"><span class="feature-index">05 / LOCAL</span><h3>Native Windows experience</h3><p>A focused .NET MAUI desktop interface with light and dark themes, protected authentication cache, and no WebView graph renderer.</p></article>
+          <article class="feature reveal"><span class="feature-index">05 / LOCAL</span><h3>Native Windows experience</h3><p>A focused desktop experience with light and dark themes, protected authentication cache, and no WebView graph renderer.</p></article>
           <article class="feature reveal"><span class="feature-index">06 / PREVIEW</span><h3>Shape the roadmap</h3><p>The project is in active preview. Community feedback on investigations, usability, accessibility, and graph templates is especially valuable.</p></article>
         </div>
       </div>
