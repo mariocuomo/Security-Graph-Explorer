@@ -1,0 +1,16 @@
+{
+  "Version": 6,
+  "Graph": {
+    "Name": "User to URL",
+    "Query": "UrlClickEvents\n| where Timestamp > ago(7d)\n| where isnotempty(AccountUpn) and isnotempty(Url)\n| project AccountUpn, Url, ActionType, Timestamp\n| take 100",
+    "SourceColumn": "AccountUpn",
+    "TargetColumn": "Url",
+    "LabelColumn": "ActionType",
+    "Description": "Users connected to clicked URLs.",
+    "IsCustom": true,
+    "QuerySource": "Defender",
+    "SourceKind": "User",
+    "TargetKind": "URL",
+    "ColorEdgesByLabel": true
+  }
+}

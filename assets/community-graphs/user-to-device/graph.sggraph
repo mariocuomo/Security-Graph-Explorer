@@ -1,0 +1,16 @@
+{
+  "Version": 6,
+  "Graph": {
+    "Name": "User to device",
+    "Query": "DeviceLogonEvents\n| where Timestamp > ago(1d)\n| where isnotempty(AccountName) and isnotempty(DeviceName)\n| project AccountName, DeviceName, ActionType, Timestamp\n| take 100",
+    "SourceColumn": "AccountName",
+    "TargetColumn": "DeviceName",
+    "LabelColumn": "ActionType",
+    "Description": "Users signing in to devices.",
+    "IsCustom": true,
+    "QuerySource": "Defender",
+    "SourceKind": "User",
+    "TargetKind": "Machine",
+    "ColorEdgesByLabel": true
+  }
+}

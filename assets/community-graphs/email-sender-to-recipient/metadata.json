@@ -1,0 +1,8 @@
+{
+  "name": "Email sender to recipient",
+  "description": "Email senders connected to recipients.",
+  "author": "Mario Cuomo",
+  "githubHandle": "mariocuomo",
+  "submittedDate": "2026-09-20",
+  "tags": ["email", "phishing"]
+}

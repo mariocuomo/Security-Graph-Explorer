@@ -1,0 +1,29 @@
+{
+  "Version": 6,
+  "Graph": {
+    "Name": "Device remote connections",
+    "Query": "DeviceNetworkEvents\n| where Timestamp > ago(7d)\n| where isnotempty(DeviceName) and isnotempty(RemoteIP)\n| project DeviceName, RemoteIP, ActionType, RemotePort, Protocol, Timestamp",
+    "SourceColumn": "DeviceName",
+    "TargetColumn": "RemoteIP",
+    "LabelColumn": "ActionType",
+    "Description": "Connects Defender devices to remote IP addresses observed during the last seven days.",
+    "IsCustom": true,
+    "QuerySource": "Defender",
+    "SourceProperties": [
+      "DeviceName"
+    ],
+    "TargetProperties": [
+      "RemoteIP"
+    ],
+    "EdgeProperties": [
+      "ActionType",
+      "RemotePort",
+      "Protocol",
+      "Timestamp"
+    ],
+    "SourceKind": "Device",
+    "TargetKind": "IP",
+    "ColorEdgesByLabel": true,
+    "EdgeColorStyle": "By label · Security"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "name": "Parent to child process",
+  "description": "Parent processes starting child processes.",
+  "author": "Mario Cuomo",
+  "githubHandle": "mariocuomo",
+  "submittedDate": "2026-09-20",
+  "tags": ["process", "endpoint"]
+}

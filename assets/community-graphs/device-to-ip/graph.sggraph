@@ -1,0 +1,14 @@
+{
+  "Version": 6,
+  "Graph": {
+    "Name": "Device to IP",
+    "Query": "DeviceNetworkEvents\n| where Timestamp > ago(1d)\n| where isnotempty(DeviceName) and isnotempty(RemoteIP)\n| project DeviceName, RemoteIP, ActionType, Timestamp\n| take 100",
+    "SourceColumn": "DeviceName",
+    "TargetColumn": "RemoteIP",
+    "LabelColumn": "ActionType",
+    "Description": "Devices connected to remote IP addresses.",
+    "IsCustom": true,
+    "QuerySource": "Defender",
+    "ColorEdgesByLabel": true
+  }
+}

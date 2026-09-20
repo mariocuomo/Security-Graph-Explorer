@@ -1,0 +1,8 @@
+{
+  "name": "User to device",
+  "description": "Users signing in to devices.",
+  "author": "Mario Cuomo",
+  "githubHandle": "mariocuomo",
+  "submittedDate": "2026-09-20",
+  "tags": ["identity", "sign-in"]
+}

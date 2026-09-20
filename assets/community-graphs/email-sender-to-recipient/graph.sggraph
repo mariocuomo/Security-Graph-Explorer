@@ -1,0 +1,16 @@
+{
+  "Version": 6,
+  "Graph": {
+    "Name": "Email sender to recipient",
+    "Query": "EmailEvents\n| where Timestamp > ago(1d)\n| where isnotempty(SenderFromAddress) and isnotempty(RecipientEmailAddress)\n| project SenderFromAddress, RecipientEmailAddress, DeliveryAction, Timestamp\n| take 100",
+    "SourceColumn": "SenderFromAddress",
+    "TargetColumn": "RecipientEmailAddress",
+    "LabelColumn": "DeliveryAction",
+    "Description": "Email senders connected to recipients.",
+    "IsCustom": true,
+    "QuerySource": "Defender",
+    "SourceKind": "User",
+    "TargetKind": "User",
+    "ColorEdgesByLabel": true
+  }
+}

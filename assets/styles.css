@@ -262,6 +262,47 @@ h1 { margin: 18px 0 20px; font-size: clamp(48px, 7vw, 88px); line-height: .98; l
 .start-panel.is-hidden { display: none; }
 .faq-empty { display: none; padding: 36px 0 0; color: var(--muted); font-size: 14px; }
 .faq-empty.is-visible { display: block; }
+
+.community-list { padding: 0 0 105px; background: #101216; }
+.community-toolbar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 28px; }
+.community-toolbar input {
+  flex: 1 1 260px;
+  max-width: 420px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+  background: #15181d;
+  color: #fff;
+  font: 500 14px "Manrope", sans-serif;
+  outline: none;
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+.community-toolbar input::placeholder { color: var(--muted); }
+.community-toolbar input:focus { border-color: var(--coral); box-shadow: 0 0 0 3px rgba(255,81,79,.18); }
+.community-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px; }
+.community-card {
+  display: flex;
+  flex-direction: column;
+  padding: 22px;
+  border-radius: 14px;
+  background: #181c22;
+  border: 1px solid var(--line);
+  box-shadow: 0 18px 40px -30px rgba(0,0,0,.7);
+  transition: transform .25s ease, border-color .25s ease;
+}
+.community-card:hover { transform: translateY(-4px); border-color: rgba(255,81,79,.32); }
+.community-card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+.community-card-head h3 { margin: 0; font-size: 17px; }
+.community-date { color: var(--muted); font: 500 11px "IBM Plex Mono", monospace; white-space: nowrap; }
+.community-desc { margin: 0 0 14px; color: var(--muted); font-size: 13px; line-height: 1.65; flex: 1 0 auto; }
+.community-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.community-tag { padding: 4px 9px; border-radius: 999px; background: rgba(255,81,79,.12); color: #ffb8b6; font: 600 10px "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: .03em; }
+.community-meta { margin-bottom: 16px; color: var(--muted); font-size: 12px; }
+.community-meta a { color: var(--coral); text-decoration: none; }
+.community-meta a:hover { text-decoration: underline; }
+.community-actions { display: flex; gap: 10px; margin-top: auto; }
+.community-empty { display: none; padding: 36px 0 0; color: var(--muted); font-size: 14px; text-align: center; }
+.community-empty.is-visible { display: block; }
 .get-started h2 { margin: 12px 0 0; font-size: clamp(36px, 5vw, 58px); line-height: 1.05; letter-spacing: -0.01em; }
 .get-started-head p { margin: 0; color: var(--muted); font-size: 17px; line-height: 1.75; }
 .start-accordion { border-top: 1px solid var(--line); }

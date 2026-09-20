@@ -1,0 +1,8 @@
+{
+  "name": "Device to IP",
+  "description": "Devices connected to remote IP addresses.",
+  "author": "Mario Cuomo",
+  "githubHandle": "mariocuomo",
+  "submittedDate": "2026-09-20",
+  "tags": ["network", "devices"]
+}

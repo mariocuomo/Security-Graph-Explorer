@@ -1,0 +1,14 @@
+{
+  "Version": 6,
+  "Graph": {
+    "Name": "Parent to child process",
+    "Query": "DeviceProcessEvents\n| where Timestamp > ago(1d)\n| where isnotempty(InitiatingProcessFileName) and isnotempty(FileName)\n| project InitiatingProcessFileName, FileName, ActionType, Timestamp\n| take 100",
+    "SourceColumn": "InitiatingProcessFileName",
+    "TargetColumn": "FileName",
+    "LabelColumn": "ActionType",
+    "Description": "Parent processes starting child processes.",
+    "IsCustom": true,
+    "QuerySource": "Defender",
+    "ColorEdgesByLabel": true
+  }
+}

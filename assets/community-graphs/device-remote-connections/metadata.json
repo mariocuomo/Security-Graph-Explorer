@@ -1,0 +1,8 @@
+{
+  "name": "Device remote connections",
+  "description": "Connects Defender devices to remote IP addresses observed during the last seven days.",
+  "author": "Mario Cuomo",
+  "githubHandle": "mariocuomo",
+  "submittedDate": "2026-09-20",
+  "tags": ["network", "devices"]
+}
